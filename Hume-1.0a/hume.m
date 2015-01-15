@@ -51,13 +51,13 @@ function hume
 %   use of this software is prohibited. The authors accept no
 %   responsibility for its use in this manner.
 %%
-handles.version = '1.0a';
+version = '1.0a';
 
 sleepPath = which('hume');
 
 [fpath] = fileparts(sleepPath);
 
-fprintf(1,'\nInitializing Húmë Version %s\n',handles.version);
+fprintf(1,'\nInitializing Húmë Version %s\n',version);
 addpath(fpath);
 fprintf(1,'Loading: Montages\n');
 addpath(genpath([fpath,'/montages']));
@@ -77,4 +77,4 @@ else
     eeglab;
 end
 
-sleepScoring
+sleepScoring;

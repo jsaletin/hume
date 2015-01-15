@@ -89,16 +89,16 @@ function sleepMontageCreator_OpeningFcn(hObject, eventdata, handles, varargin)
 % end
 
 defaultGridMat = {
-    '-50'   [0 .5 0]
-    '-25'   [0 .5 0]
+    '-75'   [0 .5 0]
+    '-37.5'   [0 .5 0]
     '0'     [0 .5 0]
-    '25'    [0 .5 0]
-    '50'    [0 .5 0]};
+    '37.5'    [0 .5 0]
+    '75'    [0 .5 0]};
 
 for i = 1:14
     
     eval(['handles.gridMat',num2str(i),' = defaultGridMat;']);
-    eval(['set(handles.scale',num2str(i),', ''Value'', 10);']);
+    eval(['set(handles.scale',num2str(i),', ''Value'', 6);']);
     eval(['set(handles.amp',num2str(i),', ''Value'', 0);']);
      eval(['set(handles.color',num2str(i),', ''BackgroundColor'', [.925 .925 .925]);']);
 
@@ -1174,7 +1174,8 @@ montageFile = [montageFile,sprintf('%%   You should have received a copy of the 
 montageFile = [montageFile,sprintf('%%   with Húmë.  If not, see <http://www.gnu.org/licenses/>.\n')];
 montageFile = [montageFile,sprintf('%%\n')];
 montageFile = [montageFile,sprintf('%%   Húmë is intended for research purposes only. Any commerical or medical\n')];
-montageFile = [montageFile,sprintf('%%   use of this software is prohibited.\n')];
+montageFile = [montageFile,sprintf('%%   use of this software is prohibited. The authors accept no\n')];
+montageFile = [montageFile,sprintf('%%   responsibility for its use in this manner.\n')];
 montageFile = [montageFile,sprintf('%%%%\n')];
 
 montageFile = [montageFile,sprintf('%% channels to hide\n')];

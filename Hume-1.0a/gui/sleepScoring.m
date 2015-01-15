@@ -308,6 +308,7 @@ else
 end
 
 handles.EEG = EEG;
+pack;
 
 %look for stage data
 filename = get(handles.stageFileIN, 'String');
@@ -1217,3 +1218,11 @@ function openData_ClickedCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 set(handles.setupPan, 'Visible', 'on')
+
+
+% --------------------------------------------------------------------
+function closeHume_Callback(hObject, eventdata, handles)
+% hObject    handle to closeHume (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+closereq;
