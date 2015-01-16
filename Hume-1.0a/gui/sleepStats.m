@@ -59,8 +59,8 @@ function sleepStats_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % Setup FileTypes
-sleepPath = which('sleepSMG');
-fileTypes = dir([fullfile(fileparts(sleepPath), 'importFunctions'),'/*.m']);
+sleepPath = which('hume');
+fileTypes = dir([fullfile(fileparts(sleepPath), 'coreFunctions/importFunctions'),'/*.m']);
 type=get(handles.fileType, 'String');
 handles.extList = {'.mat'};
 handles.importList = {[]};

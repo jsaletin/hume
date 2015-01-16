@@ -56,7 +56,7 @@ elseif nargin==1
     srate = 200;
 
 elseif nargin==0
-    stageData={'UniSA *.rtf','.rtf','convertScores_ProfusionCSR'};
+    stageData={'UniSA *.RTF','.RTF','convertScores_ProfusionCSR'};
     
     scorer=[];
     id = [];
@@ -95,12 +95,12 @@ savename = [outname,'_scores'];
 
 [path, fileName, fileExt] = fileparts(file);
   
-if ~exist([path,'/',fileName,'.hyp.txt'])
+if ~exist([path,'/',fileName,'.txt'])
     h = errordlg(sprintf('You are using a UoSA CSR Profusion Event File yet no corresponding Hypnogram File is present.\n\nPlease check your file path, and re-export if neccessary and then try again'),'No CSR Event File');
     error(sprintf('\n\nYou are using a UoSA CSR Profusion Event File yet no corresponding Hypnogram File is present.\n\nPlease check your file path, and re-export if neccessary and then try again'));
 else      
     eventFile = file;
-    hypFile = [path,'/',fileName,'.hyp.txt'];
+    hypFile = [path,'/',fileName,'.txt'];
 end
 
 %% PARSE HYPNOGRAM FILE
