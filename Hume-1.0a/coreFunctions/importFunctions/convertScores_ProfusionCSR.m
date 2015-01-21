@@ -105,7 +105,7 @@ end
 
 %% PARSE HYPNOGRAM FILE
 
-fid = fopen(hypFile)
+fid = fopen(hypFile);
 data = textscan(fid,'%s');
 fclose(fid);
 
