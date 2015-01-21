@@ -180,4 +180,4 @@ primaryScorer = get(handles.primaryFileIN,'string');
 secondaryScorer = get(handles.secondaryFileIN,'string');
 outPath = handles.folderOUTPath;
 outName = get(handles.folderOUT,'string');
-ReliabilityWORKING(primaryScorer,secondaryScorer,outPath,outName);
+Reliability(primaryScorer,secondaryScorer,outPath,outName);

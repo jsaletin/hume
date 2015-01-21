@@ -362,14 +362,14 @@ report = [report, sprintf('<h1>Event Reliability (SCORER 2 - SCORER 1)</h1>\n')]
 if ~isempty(events1)
     if ~isempty(events2)
         
-        eFields = {events1{:,1}};            
+        eFields = {events1{:,1}};
         eFields2 = {events2{:,1}};
-
+        
         
         evREL = [];
-
+        
         report = [report, sprintf('<h2>Absolute Difference</h2>\n')];
-
+        
         report = [report, sprintf('<table cellpadding="5">\n<tr><td></td><td><b>Wake</b></td><td><b>MT</b></td><td><b>NREM</b></td><td><b>REM</b></td><td><b>TST</b></td></tr>\n')];
         
         for i=1:length(eFields)
@@ -380,7 +380,7 @@ if ~isempty(events1)
             if sum(ismember(eFields2,eFields{i}))>0
                 
                 ev2 = events2{ismember(eFields2,eFields{i}),2};
-
+                
                 evREL=[ev2-ev1];
                 
             else
@@ -397,17 +397,17 @@ if ~isempty(events1)
         report = [report,'</table>'];
         
         report = [report, sprintf('<h2>Percent Difference</h2>\n')];
-
+        
         report = [report, sprintf('<table cellpadding="5">\n<tr><td></td><td><b>Wake</b></td><td><b>MT</b></td><td><b>NREM</b></td><td><b>REM</b></td><td><b>TST</b></td></tr>\n')];
         
         for i=1:length(eFields)
             
             ev1 = events1{i,2};
-
+            
             if sum(ismember(eFields2,eFields{i}))>0
                 
                 ev2 = events2{ismember(eFields2,eFields{i}),2};
-
+                
                 evREL=[((ev2-ev1)./ev1).*100];
                 
             else
@@ -417,17 +417,18 @@ if ~isempty(events1)
             end
             
             report = [report, sprintf('<tr><td><b>%s</b></td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>\n', [eFields{i},':'], evREL)];
-           Reliability.eventsPER{1,1} = eFields{i};
+            Reliability.eventsPER{1,1} = eFields{i};
             Reliabiltiy.eventsPER{1,2} = evREL;        end
         report = [report,'</table>'];
         
         report = [report, sprintf('<br>Note: NaNs Indicate Event Marked by Scorer 1 and not by Scorer 2\n')];
-
-report = [report, '<br><hr>'];
-
+        
+        report = [report, '<br><hr>'];
+        
     else
         report = [report, sprintf('<br>!!! PRIMARY SCORER MARKED EVENTS, SECONDARY SCORER DID NOT, CHECK FILE !!!\n')];
     end
+end
 
     
 mkdir([outPath,'/',outName]);
@@ -439,7 +440,6 @@ web([outPath,'/',outName,'/',outName,'.html']);
 
 % Create Reliability Struct
 eval(['save ''',[outPath,'/',outName,'/',outName],''' Reliability;']);
-end
 end
 
 function [k agreement] = kappaCalc(table)
