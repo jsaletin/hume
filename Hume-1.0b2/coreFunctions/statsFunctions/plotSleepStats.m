@@ -558,7 +558,7 @@ report = [report, '</td></tr></table>'];
 report = [report, '<br><table cellpadding="5"><tr>'];
 report = [report, '<td><h3>Hourly Split (min)</h3></td></tr>'];
 
-splitFactor = SPTepoch / 120;
+splitFactor = SPTepoch / (60 * (60/win));
 report = [report, '</td><td>'];
 [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, splitFactor, win);
 stageStats.hourBounds = breaks + sleepLat - 1;
