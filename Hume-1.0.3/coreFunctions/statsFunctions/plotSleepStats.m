@@ -322,7 +322,7 @@ stageStats.percentSleep(2, :) = [SPTepoch, (SPTepoch*win)/60, SPTepoch/TDTepoch,
 
 %TST
 report = [report, sprintf('<tr><td><b>Total sleep time:</b></td><td>%d</td><td>%.1f<td>%.2f</td><td>%.2f</td><td>%.2f</td></tr>\n', TSTepoch, (TSTepoch*win)/60, TSTepoch/TDTepoch*100, TSTepoch/SPTepoch*100,TSTepoch/TSTepoch*100)];
-stageStats.percentSleep(3, :) = [TSTepoch, (TSTepoch*win)/60, TSTepoch/TDTepoch, TSTepoch/SPTepoch, TSTepoch/SPTepoch];
+stageStats.percentSleep(3, :) = [TSTepoch, (TSTepoch*win)/60, TSTepoch/TDTepoch, TSTepoch/SPTepoch, TSTepoch/TSTepoch];
 
 %SBSO
 SBSO = sum(stages(1:sleepLat-1) > 0 & stages(1:sleepLat-1) < 7);
@@ -369,7 +369,7 @@ stageStats.percentSleep(16, :) = [cur, (cur*win)/60, cur/TDTepoch, cur/SPTepoch,
 %Anomalous 
 Anom = sum(stages == 7);
 report = [report, sprintf('<tr><td><b>Anomalous (Unscored):</b></td><td>%d</td><td>%.1f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td></tr>\n', Anom, (Anom*win)/60, Anom/TDTepoch*100, Anom/SPTepoch*100, Anom/TSTepoch*100)];
-stageStats.percentSleep(6, :) = [Anom, (Anom*win)/60, Anom/TDTepoch, Anom/SPTepoch, Anom/TSTepoch];
+stageStats.percentSleep(17, :) = [Anom, (Anom*win)/60, Anom/TDTepoch, Anom/SPTepoch, Anom/TSTepoch];
 
 
 report = [report, '</table>'];

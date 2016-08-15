@@ -102,12 +102,21 @@ win = str2num(header{1,4}{11,1});
 head = [char(header{1})  char(header{2}) char(header{3}) char(header{4})];
 stageData.Notes = head;
 
-stageData.id = id;
-stageData.cond = cond;
-stageData.scorer = scorer;
-stageData.recordName = fileName;
-stageData.EDFName = EDFName;
+if ~isempty(id)
+    stageData.id = id;
+end
 
+if ~isempty(cond)
+    stageData.cond = cond;
+end
+
+if ~isempty(scorer)
+    stageData.scorer = scorer;
+end
+
+if (~isempty(fileName))
+    stageData.recordName = 
+end
 %% READ STAGE DATA
 
 data = textscan(fid,'%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s','Delimiter','|','headerlines',6);

@@ -1240,3 +1240,18 @@ if strcmp(button,'Yes')
     closereq;
 end
 
+
+% --------------------------------------------------------------------
+function uploadServer_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to uploadServer (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+sleepStatsDBCommit;
+
+
+% --------------------------------------------------------------------
+function upload_Callback(hObject, eventdata, handles)
+% hObject    handle to upload (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+sleepStatsDBCommit;
