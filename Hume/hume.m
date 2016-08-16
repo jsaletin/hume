@@ -51,7 +51,7 @@ function hume
 %   use of this software is prohibited. The authors accept no
 %   responsibility for its use in this manner.
 %%
-version = '1.0.3';
+version = Ô1.0.4Õ;
 
 sleepPath = which('hume');
 
