@@ -264,7 +264,7 @@ else
         
         if sum(cell2mat(fetch(handles.conn,['SELECT finalscores FROM SleepLabStats.scoredinfo WHERE edfname = ''FCCBABSL.EDF'';']))) == 1
             
-            recordOnRecord=fetch(handles.conn,['SELECT record FROM SleepLabStats.scoredinfo WHERE edfname = ''',handles.edfName.String,''' AND finalscores = TRUE;']);
+            recordOnRecord=fetch(handles.conn,['SELECT record FROM SleepLabStats.scoredinfo WHERE edfname = ''',handles.edfName.String,''' AND finalscores = 1;']);
             
             % Previous final data
             button = questdlg(['Previous final data for EDF: ''', handles.edfName.String,''' exists: ''', recordOnRecord{1}, '.'' Replace with current record?'],'Pre-existing Record Found','Replace','Cancel','Cancel');

@@ -1,5 +1,5 @@
-function varargout = sleepDBConfirm(varargin)
-% SLEEPDBCONFIRM MATLAB code for sleepDBConfirm.fig
+function varargout = sleepDBUpload(varargin)
+% SLEEPDBUPLOAD MATLAB code for sleepDBUpload.fig
 %%   Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
 %   This file is part of Húmë.
@@ -23,16 +23,16 @@ function varargout = sleepDBConfirm(varargin)
 %%
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help sleepDBConfirm
+% Edit the above text to modify the response to help sleepDBUpload
 
-% Last Modified by GUIDE v2.5 15-Aug-2016 02:51:41
+% Last Modified by GUIDE v2.5 22-Aug-2016 18:10:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @sleepDBConfirm_OpeningFcn, ...
-    'gui_OutputFcn',  @sleepDBConfirm_OutputFcn, ...
+    'gui_OpeningFcn', @sleepDBUpload_OpeningFcn, ...
+    'gui_OutputFcn',  @sleepDBUpload_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -47,70 +47,25 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before sleepDBConfirm is made visible.
-function sleepDBConfirm_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before sleepDBUpload is made visible.
+function sleepDBUpload_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to sleepDBConfirm (see VARARGIN)
+% varargin   command line arguments to sleepDBUpload (see VARARGIN)
 
-% Choose default command line output for sleepDBConfirm
+% Choose default command line output for sleepDBUpload
 handles.output = hObject;
 
-% Set up confirmation info
-if size(varargin, 2) == 2
-    
-    handles.conn = varargin{1};
-    handles.input = varargin{2};
-    
-    % Load SleepStats
-    load([handles.input.pathName,'/',handles.input.fileIN.String,'/',handles.input.fileIN.String,'_stats.mat']);
-    handles.stageStats = stageStats;
-    % Set Record Name
-    set(handles.recordName, 'String', handles.input.fileIN.String);
-    
-    % Strip ID and Scorer
-    [scorer_id, cond] = strtok(handles.input.fileIN.String,'_');
-    id = scorer_id(isstrprop(scorer_id,'digit'));
-    scorer = scorer_id(isstrprop(scorer_id,'alpha'));
-    
-    if(ha
-    set(handles.id,'String',id);
-    set(handles.scorer,'String',scorer);
-    set(handles.condition,'String',cond(2:end));
-    
-    studies = sortrows(fetch(handles.conn, 'SELECT study FROM SleepLabStats.studies;'));
-    set(handles.studyName,'String',{'Study',studies{:}});
-    
-    % Check ID in system
-    if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.idStudy WHERE id = ',id,';']))
-        
-        set(handles.studyName,'Value',find(ismember(handles.studyName.String, fetch(handles.conn, ['SELECT study FROM SleepLabStats.idStudy WHERE id = ',id,';']))));
-    else
-        set(handles.studyName,'Value',1);
-    end
-    
-    % If EDFNAME in Notes
-    if isfield(handles.stageStats.stageData,'EDFname')
-        set(handles.edfName,'String',handles.stageStats.stageData.EDFname);
-    elseif ~isempty(handles.stageStats.stageData.Notes)
-        
-        FileStr=strsplit(handles.stageStats.stageData.Notes(find(~cellfun('isempty',regexp(cellstr(handles.stageStats.stageData.Notes),'File name'))),:));
-        set(handles.edfName,'String',FileStr{3});
-    end
-    
-end
-
-% Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes sleepDBConfirm wait for user response (see UIRESUME)
+% UIWAIT makes sleepDBUpload wait for user response (see UIRESUME)
 % uiwait(handles.gui);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = sleepDBConfirm_OutputFcn(hObject, eventdata, handles)
+function varargout = sleepDBUpload_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -265,7 +220,7 @@ else
         
         if sum(cell2mat(fetch(handles.conn,['SELECT finalscores FROM SleepLabStats.scoredinfo WHERE edfname = ''FCCBABSL.EDF'';']))) == 1
             
-            recordOnRecord=fetch(handles.conn,['SELECT record FROM SleepLabStats.scoredinfo WHERE edfname = ''',handles.edfName.String,''' AND finalscores = TRUE;']);
+            recordOnRecord=fetch(handles.conn,['SELECT record FROM SleepLabStats.scoredinfo WHERE edfname = ''',handles.edfName.String,''' AND finalscores = 1;']);
             
             % Previous final data
             button = questdlg(['Previous final data for EDF: ''', handles.edfName.String,''' exists: ''', recordOnRecord{1}, '.'' Replace with current record?'],'Pre-existing Record Found','Replace','Cancel','Cancel');
@@ -375,8 +330,59 @@ function browseFileIN_Callback(hObject, eventdata, handles)
 [statsDir] = uigetdir([],'Hümé Sleep Output Folder');
 [folder, file] = fileparts(statsDir);
 set(handles.fileIN, 'String', file);
+set(handles.fileIN, 'ForegroundColor', 'k');
 handles.pathName = folder;
-guidata(hObject,handles);
+
+if isempty(getappdata(0,'Conn'))
+    msgbox(['Lost connection to database, sing out and log in again!']);
+    return;
+else
+    if ~isopen(getappdata(0,'Conn'))
+        msgbox(['Lost connection to database, sing out and log in again!']);
+        return;
+        
+    else
+        handles.conn = getappdata(0,'Conn');
+        
+        % Load SleepStats
+        load([handles.pathName,'/',handles.fileIN.String,'/',handles.fileIN.String,'_stats.mat']);
+        handles.stageStats = stageStats;
+        % Set Record Name
+        set(handles.recordName, 'String', handles.fileIN.String);
+        
+        % Strip ID and Scorer
+        [scorer_id, cond] = strtok(handles.fileIN.String,'_');
+        id = scorer_id(isstrprop(scorer_id,'digit'));
+        scorer = scorer_id(isstrprop(scorer_id,'alpha'));
+        
+        set(handles.id,'String',id);
+        set(handles.scorer,'String',scorer);
+        set(handles.condition,'String',cond(2:end));
+        
+        studies = sortrows(fetch(handles.conn, 'SELECT study FROM SleepLabStats.studies;'));
+        set(handles.studyName,'String',{'Study',studies{:}});
+        
+        % Check ID in system
+        if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.idStudy WHERE id = ',id,';']))
+            
+            set(handles.studyName,'Value',find(ismember(handles.studyName.String, fetch(handles.conn, ['SELECT study FROM SleepLabStats.idStudy WHERE id = ',id,';']))));
+        else
+            set(handles.studyName,'Value',1);
+        end
+        
+        % If EDFNAME in Notes
+        if isfield(handles.stageStats.stageData,'EDFname')
+            set(handles.edfName,'String',handles.stageStats.stageData.EDFname);
+        elseif ~isempty(handles.stageStats.stageData.Notes)
+            
+            FileStr=strsplit(handles.stageStats.stageData.Notes(find(~cellfun('isempty',regexp(cellstr(handles.stageStats.stageData.Notes),'File name'))),:));
+            set(handles.edfName,'String',FileStr{3});
+        end
+        
+    end
+end
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on selection change in dbAuth.
 function dbAuth_Callback(hObject, eventdata, handles)

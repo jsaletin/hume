@@ -1,5 +1,5 @@
-function varargout = sleepStatsDBCommit(varargin)
-% SLEEPSTATSDBCOMMIT MATLAB code for sleepStatsDBCommit.fig
+function varargout = sleepDBConnect(varargin)
+% SLEEPDBCONNECT MATLAB code for sleepDBConnect.fig
 %%   Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
 %   This file is part of Húmë.
@@ -23,16 +23,16 @@ function varargout = sleepStatsDBCommit(varargin)
 %%
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help sleepStatsDBCommit
+% Edit the above text to modify the response to help sleepDBConnect
 
-% Last Modified by GUIDE v2.5 16-Aug-2016 12:35:31
+% Last Modified by GUIDE v2.5 22-Aug-2016 18:33:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @sleepStatsDBCommit_OpeningFcn, ...
-                   'gui_OutputFcn',  @sleepStatsDBCommit_OutputFcn, ...
+                   'gui_OpeningFcn', @sleepDBConnect_OpeningFcn, ...
+                   'gui_OutputFcn',  @sleepDBConnect_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -47,15 +47,15 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before sleepStatsDBCommit is made visible.
-function sleepStatsDBCommit_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before sleepDBConnect is made visible.
+function sleepDBConnect_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to sleepStatsDBCommit (see VARARGIN)
+% varargin   command line arguments to sleepDBConnect (see VARARGIN)
 
-% Choose default command line output for sleepStatsDBCommit
+% Choose default command line output for sleepDBConnect
 handles.output = hObject;
 
 % Setup FileTypes
@@ -66,12 +66,12 @@ handles.password='';
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes sleepStatsDBCommit wait for user response (see UIRESUME)
+% UIWAIT makes sleepDBConnect wait for user response (see UIRESUME)
 % uiwait(handles.gui);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = sleepStatsDBCommit_OutputFcn(hObject, eventdata, handles) 
+function varargout = sleepDBConnect_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -81,9 +81,9 @@ function varargout = sleepStatsDBCommit_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in uploadData.
-function uploadData_Callback(hObject, eventdata, handles)
-% hObject    handle to uploadData (see GCBO)
+% --- Executes on button press in connect.
+function connect_Callback(hObject, eventdata, handles)
+% hObject    handle to connect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -95,30 +95,35 @@ switch handles.dbAuth.Value
        msgbox('Please pick a server authentication type');
        
     case 2
-       conn = database(handles.dbName.String,handles.dbUsername.String,handles.dbPassword.String, ...
+       handles.conn = database(handles.dbName.String,handles.dbUsername.String,handles.dbPassword.String, ...
                  'net.sourceforge.jtds.jdbc.Driver', ['jdbc:jtds:sqlserver://',handles.dbAddress.String,'/',handles.dbName.String,';domain=',handles.dbDomain.String,';useNTLMv2=true;']);
 
     case 3
-       conn = database(handles.dbName.String,handles.dbUsername.String,handles.dbPassword.String, ...
+       handles.conn = database(handles.dbName.String,handles.dbUsername.String,handles.dbPassword.String, ...
                 'Vendor','Microsoft SQL Server','Server',handles.dbAddress.String, ...
                 'AuthType','Server','portnumber',1433);
             
     case 4 
-       conn = database(handles.dbName.String,'jared','',...
+       handles.conn = database(handles.dbName.String,'jared','',...
                 'Vendor','PostgreSQL',...
                 'Server','localhost');
     case 5
         msgbox('Integarted Húmë is not yet implemented');
-end 
-    
-    if isopen(conn) == 0
+end
+
+if ~isfield(handles,'conn')
         msgbox('Failed to Connect to Database, Check Parameters');
         return;
-    end
-        
-        sleepDBConfirm(conn, handles);
-        
-        
+elseif isopen(handles.conn) == 0
+        msgbox('Failed to Connect to Database, Check Parameters');
+        return
+else
+    guidata(hObject,handles);
+    setappdata(0,'Conn',handles.conn);
+    waitfor(msgbox('Connection OK!'));
+    close(handles.gui);    % sleepStatsDBReport2(conn, handles);
+end
+
 
 
 function fileIN_Callback(hObject, eventdata, handles)
@@ -158,57 +163,7 @@ function browseFileIN_Callback(hObject, eventdata, handles)
 set(handles.fileIN, 'String', file);
 set(handles.fileIN, 'ForegroundColor', 'k');
 handles.pathName = folder;
-
-if isempty(getappdata(0,'Conn'))
-    msgbox(['Lost connection to database, sing out and log in again!']);
-    return;
-else
-    if ~isopen(getappdata(0,'Conn'))
-        msgbox(['Lost connection to database, sing out and log in again!']);
-        return;
-        
-    else
-        handles.conn = getappdata(0,'Conn');
-        
-        % Load SleepStats
-        load([handles.pathName,'/',handles.fileIN.String,'/',handles.fileIN.String,'_stats.mat']);
-        handles.stageStats = stageStats;
-        % Set Record Name
-        set(handles.recordName, 'String', handles.fileIN.String);
-        
-        % Strip ID and Scorer
-        [scorer_id, cond] = strtok(handles.fileIN.String,'_');
-        id = scorer_id(isstrprop(scorer_id,'digit'));
-        scorer = scorer_id(isstrprop(scorer_id,'alpha'));
-        
-        set(handles.id,'String',id);
-        set(handles.scorer,'String',scorer);
-        set(handles.condition,'String',cond(2:end));
-        
-        studies = sortrows(fetch(handles.conn, 'SELECT study FROM SleepLabStats.studies;'));
-        set(handles.studyName,'String',{'Study',studies{:}});
-        
-        % Check ID in system
-        if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.idStudy WHERE id = ',id,';']))
-            
-            set(handles.studyName,'Value',find(ismember(handles.studyName.String, fetch(handles.conn, ['SELECT study FROM SleepLabStats.idStudy WHERE id = ',id,';']))));
-        else
-            set(handles.studyName,'Value',1);
-        end
-        
-        % If EDFNAME in Notes
-        if isfield(handles.stageStats.stageData,'EDFname')
-            set(handles.edfName,'String',handles.stageStats.stageData.EDFname);
-        elseif ~isempty(handles.stageStats.stageData.Notes)
-            
-            FileStr=strsplit(handles.stageStats.stageData.Notes(find(~cellfun('isempty',regexp(cellstr(handles.stageStats.stageData.Notes),'File name'))),:));
-            set(handles.edfName,'String',FileStr{3});
-        end
-        
-    end
-end
-% Update handles structure
-guidata(hObject, handles);
+guidata(hObject,handles);
 
 % --- Executes on selection change in dbAuth.
 function dbAuth_Callback(hObject, eventdata, handles)
@@ -531,3 +486,13 @@ function dbPassword_KeyPressFcn(hObject, eventdata, handles)
 % handles.dbPassword.password=password;
 % guidata(hObject,handles);
 % %set(handles,'password',password) % Store the password in its current state
+
+
+% --- Executes when user attempts to close gui.
+function gui_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to gui (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+delete(hObject);

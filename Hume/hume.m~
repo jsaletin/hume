@@ -51,7 +51,7 @@ function hume
 %   use of this software is prohibited. The authors accept no
 %   responsibility for its use in this manner.
 %%
-version = '1.0b';
+version = '1.0.4';
 
 sleepPath = which('hume');
 
@@ -77,5 +77,16 @@ else
     eeglab;
 end
 
-% Check for 
+% Check for nansum
+
+if exist('nansum.m') ~= 2
+    
+    fprintf(1,'\n!!! No internal nan functions; check Statistics Toolbox !!!\n');
+    addpath([fpath,'/outsideToolboxes/misc/nansuite']);
+    fprintf(1,'Loading: nan functions\n');
+
+end
+
+
+    
 sleepScoring;

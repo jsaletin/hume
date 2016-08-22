@@ -158,55 +158,51 @@ function browseFileIN_Callback(hObject, eventdata, handles)
 set(handles.fileIN, 'String', file);
 set(handles.fileIN, 'ForegroundColor', 'k');
 handles.pathName = folder;
+guidata(hObject,handles);
 
-if isempty(getappdata(0,'Conn'))
-    msgbox(['Lost connection to database, sing out and log in again!']);
-    return;
-else
-    if ~isopen(getappdata(0,'Conn'))
-        msgbox(['Lost connection to database, sing out and log in again!']);
-        return;
-        
-    else
+if ~isempty(getappdata(0,'Conn')
+    if isopen(getappdata(0,'Conn')
         handles.conn = getappdata(0,'Conn');
+    else
         
-        % Load SleepStats
-        load([handles.pathName,'/',handles.fileIN.String,'/',handles.fileIN.String,'_stats.mat']);
-        handles.stageStats = stageStats;
-        % Set Record Name
-        set(handles.recordName, 'String', handles.fileIN.String);
-        
-        % Strip ID and Scorer
-        [scorer_id, cond] = strtok(handles.fileIN.String,'_');
-        id = scorer_id(isstrprop(scorer_id,'digit'));
-        scorer = scorer_id(isstrprop(scorer_id,'alpha'));
-        
-        set(handles.id,'String',id);
-        set(handles.scorer,'String',scorer);
-        set(handles.condition,'String',cond(2:end));
-        
-        studies = sortrows(fetch(handles.conn, 'SELECT study FROM SleepLabStats.studies;'));
-        set(handles.studyName,'String',{'Study',studies{:}});
-        
-        % Check ID in system
-        if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.idStudy WHERE id = ',id,';']))
-            
-            set(handles.studyName,'Value',find(ismember(handles.studyName.String, fetch(handles.conn, ['SELECT study FROM SleepLabStats.idStudy WHERE id = ',id,';']))));
-        else
-            set(handles.studyName,'Value',1);
-        end
-        
-        % If EDFNAME in Notes
-        if isfield(handles.stageStats.stageData,'EDFname')
-            set(handles.edfName,'String',handles.stageStats.stageData.EDFname);
-        elseif ~isempty(handles.stageStats.stageData.Notes)
-            
-            FileStr=strsplit(handles.stageStats.stageData.Notes(find(~cellfun('isempty',regexp(cellstr(handles.stageStats.stageData.Notes),'File name'))),:));
-            set(handles.edfName,'String',FileStr{3});
-        end
-        
-    end
 end
+   % Load SleepStats
+    load([handles.input.pathName,'/',handles.input.fileIN.String,'/',handles.input.fileIN.String,'_stats.mat']);
+    handles.stageStats = stageStats;
+    % Set Record Name
+    set(handles.recordName, 'String', handles.input.fileIN.String);
+    
+    % Strip ID and Scorer
+    [scorer_id, cond] = strtok(handles.input.fileIN.String,'_');
+    id = scorer_id(isstrprop(scorer_id,'digit'));
+    scorer = scorer_id(isstrprop(scorer_id,'alpha'));
+    
+    set(handles.id,'String',id);
+    set(handles.scorer,'String',scorer);
+    set(handles.condition,'String',cond(2:end));
+    
+    studies = sortrows(fetch(handles.conn, 'SELECT study FROM SleepLabStats.studies;'));
+    set(handles.studyName,'String',{'Study',studies{:}});
+    
+    % Check ID in system
+    if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.idStudy WHERE id = ',id,';']))
+        
+        set(handles.studyName,'Value',find(ismember(handles.studyName.String, fetch(handles.conn, ['SELECT study FROM SleepLabStats.idStudy WHERE id = ',id,';']))));
+    else
+        set(handles.studyName,'Value',1);
+    end
+    
+    % If EDFNAME in Notes
+    if isfield(handles.stageStats.stageData,'EDFname')
+        set(handles.edfName,'String',handles.stageStats.stageData.EDFname);
+    elseif ~isempty(handles.stageStats.stageData.Notes)
+        
+        FileStr=strsplit(handles.stageStats.stageData.Notes(find(~cellfun('isempty',regexp(cellstr(handles.stageStats.stageData.Notes),'File name'))),:));
+        set(handles.edfName,'String',FileStr{3});
+    end
+    
+end
+
 % Update handles structure
 guidata(hObject, handles);
 

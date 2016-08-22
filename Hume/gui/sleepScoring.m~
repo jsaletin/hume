@@ -1254,15 +1254,8 @@ function upload_Callback(hObject, eventdata, handles)
 % hObject    handle to upload (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if ~isempty(getappdata(0,'Conn'))
-    if isopen(getappdata(0,'Conn'))
-        sleepDBUpload;
-    else
-        signOut_Callback([],[],handles);
-    end
-else
-    signOut_Callback([],[],handles);
-end
+sleepStatsDBCommit;
+
 
 % --------------------------------------------------------------------
 function Untitled_3_Callback(hObject, eventdata, handles)
@@ -1297,41 +1290,18 @@ function sqlLogin_Callback(hObject, eventdata, handles)
 % hObject    handle to sqlLogin (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-waitfor(sleepDBConnect);
+sleepDBConnect;
 if ~isempty(getappdata(0,'Conn'))
     if isopen(getappdata(0,'Conn'))
         
         % Activate Buttons
-        set(handles.signOut,'Enable','on');
-        set(handles.upload,'Enable','on');
-        set(handles.genTable,'Enable','on');         
-        
-        % Hide Login
-        set(handles.sqlLogin,'Enable','off');
-    end
-end
+        handles.signOut
+    
 % --------------------------------------------------------------------
 function signOut_Callback(hObject, eventdata, handles)
 % hObject    handle to signOut (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if ~isempty(getappdata(0,'Conn'))
-    if isopen(getappdata(0,'Conn'))
-        close(getappdata(0,'Conn'));
-        setappdata(0,'Conn',[]);
-        set(handles.signOut,'Enable','off');
-        set(handles.upload,'Enable','off');
-        set(handles.genTable,'Enable','off');
-        set(handles.sqlLogin,'Enable','on');
-        msgbox('Server Disconnected!');
-    else
-        setappdata(0,'Conn',[]);
-        msgbox('Server Already Closed!');
-    end
-else
-    msgbox('Server Already Closed!');
-end
-    
 
 
 % --------------------------------------------------------------------
@@ -1339,4 +1309,3 @@ function genTable_Callback(hObject, eventdata, handles)
 % hObject    handle to genTable (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-sleepStatsDBReport(getappdata(0,'Conn'), handles);
