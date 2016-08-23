@@ -113,7 +113,7 @@ fprintf(1,'\n\nWelcome to Húmë! Happy Scoring!\n\n');
 guidata(hObject, handles);
 
 % UIWAIT makes sleepScoring wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.humeWindow);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -129,7 +129,7 @@ varargout{1} = handles.output;
 
 %% Key Board short cuts for scoring + buttons
 
-function figure1_KeyPressFcn(hObject, eventdata, handles)
+function humeWindow_KeyPressFcn(hObject, eventdata, handles)
 
 if isfield(handles,'stageData')
     
@@ -354,7 +354,7 @@ guidata(hObject, handles)
 
 [stagePath, stageName, stageEXT]=fileparts(get(handles.stageFileIN,'String'));
 [eegPath, eegName, eegEXT]=fileparts(get(handles.fileIN,'String'));
-set(handles.figure1,'Name',sprintf('Húmë Scoring: [PSG File: %s, Score File: %s]',[eegName,eegEXT], [stageName,stageEXT]));
+set(handles.humeWindow,'Name',sprintf('Húmë Scoring: [PSG File: %s, Score File: %s]',[eegName,eegEXT], [stageName,stageEXT]));
 handles = initStaging(handles);
 guidata(hObject, handles);
 runPlot(handles)
@@ -1235,10 +1235,7 @@ function closeHume_Callback(hObject, eventdata, handles)
 % hObject    handle to closeHume (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-button = questdlg('Are you sure you want to quit Húmë?','Quit Húmë?','Yes','No','Yes');
-if strcmp(button,'Yes')
-    closereq;
-end
+humeWindow_CloseRequestFcn;
 
 
 % --------------------------------------------------------------------
@@ -1326,9 +1323,17 @@ if ~isempty(getappdata(0,'Conn'))
         msgbox('Server Disconnected!');
     else
         setappdata(0,'Conn',[]);
-        msgbox('Server Already Closed!');
+        set(handles.signOut,'Enable','off');
+        set(handles.upload,'Enable','off');
+        set(handles.genTable,'Enable','off');
+        set(handles.sqlLogin,'Enable','on');
+        % msgbox('Server Already Closed!');
     end
 else
+    set(handles.signOut,'Enable','off');
+    set(handles.upload,'Enable','off');
+    set(handles.genTable,'Enable','off');
+    set(handles.sqlLogin,'Enable','on');
     msgbox('Server Already Closed!');
 end
     
@@ -1340,3 +1345,17 @@ function genTable_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 sleepStatsDBReport(getappdata(0,'Conn'), handles);
+
+
+% --- Executes when user attempts to close humeWindow.
+function humeWindow_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to humeWindow (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+button = questdlg('Are you sure you want to quit Húmë?','Quit Húmë?','Yes','No','Yes');
+if strcmp(button,'Yes')
+    signOut_Callback(hObject,[],handles);
+    closereq;
+end
