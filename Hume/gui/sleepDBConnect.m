@@ -1,6 +1,6 @@
 function varargout = sleepDBConnect(varargin)
 % SLEEPDBCONNECT MATLAB code for sleepDBConnect.fig
-%%   Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
+%%   Copyright (c) 2016 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
 %   This file is part of Húmë.
 %   

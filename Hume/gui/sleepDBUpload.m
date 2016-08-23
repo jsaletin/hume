@@ -1,6 +1,6 @@
 function varargout = sleepDBUpload(varargin)
 % SLEEPDBUPLOAD MATLAB code for sleepDBUpload.fig
-%%   Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
+%%   Copyright (c) 2016 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
 %   This file is part of Húmë.
 %
@@ -119,7 +119,7 @@ if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.scoredinfo WHERE r
         end
         
         % Proceed with overwriting:
-        update(handles.conn, 'SleepLabStats.scoredinfo', {'finalscores','uploadedby','datemodified'}, {handles.finalData.Value,handles.conn.UserName,datestr(clock,'yyyy-mm-dd HH:MM:SS')}, ['where record =''',handles.recordName.String,'''']);
+        update(handles.conn, 'SleepLabStats.scoredinfo', {'finalscores','uploadedby','datemodified','statsin'}, {handles.finalData.Value,handles.conn.UserName,datestr(clock,'yyyy-mm-dd HH:MM:SS'), 'Hume'}, ['where record =''',handles.recordName.String,'''']);
         
         update(handles.conn, 'SleepLabStats.TDT', {'epochs','Minutes','TDTper','SPTper','TSTper'}, [num2cell(handles.stageStats.percentSleep(1,:))], ['where record =''',handles.recordName.String,'''']);
         update(handles.conn, 'SleepLabStats.SPT', {'epochs','Minutes','TDTper','SPTper','TSTper'}, [num2cell(handles.stageStats.percentSleep(2,:))], ['where record =''',handles.recordName.String,'''']);
@@ -235,7 +235,7 @@ else
         end
     end
 
-        insert(handles.conn, 'SleepLabStats.scoredInfo', {'record','edfname','scorer','finalscores','uploadedby','datemodified'},[{handles.recordName.String,handles.edfName.String,handles.scorer.String,handles.finalData.Value,handles.conn.UserName,datestr(clock,'yyyy-mm-dd HH:MM:SS')}]);
+        insert(handles.conn, 'SleepLabStats.scoredInfo', {'record','edfname','scorer','finalscores','uploadedby','datemodified', 'statsin'},[{handles.recordName.String,handles.edfName.String,handles.scorer.String,handles.finalData.Value,handles.conn.UserName,datestr(clock,'yyyy-mm-dd HH:MM:SS'), 'Hume'}]);
 
     % Enter Statistics
     insert(handles.conn, 'SleepLabStats.TDT', {'record','epochs','Minutes','TDTper','SPTper','TSTper'}, [{handles.recordName.String},num2cell(handles.stageStats.percentSleep(1,:))]);
