@@ -73,7 +73,7 @@ end
 % Populate Study List
 humepath = which('hume');
 reportpath = dir(fullfile(fileparts(humepath), 'coreFunctions/sqlReports'));
-reports = {reportpath.name}'
+reports = {reportpath.name}';
 
 for i = 3:length(reports)
     handles.reportFuncs{i-2} = reports{i}(1:end-2);
