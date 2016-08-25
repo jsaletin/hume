@@ -181,7 +181,9 @@ end
         end
 
 
-
+stageStats.rules.combiningRule = combining;
+stageStats.rules.minREMlength = REMmin;
+stageStats.rules.onsetRule = onsetMode;
 
 stages = stageData.stages(min(find(stageData.stages ~= 7)):max(find(stageData.stages ~=7) ));
 stageStats.TDTstages = stages;
@@ -792,7 +794,7 @@ end
 
 function [report, stageStats, breaks] = sleepSplit(report, stageStats, stages, stageMap, splitter, win)
 
-q = ceil(length(stages)/splitter);
+q = round(length(stages)/splitter);
 
 if ceil(splitter) == floor(splitter)
     splitterEnd = splitter;
