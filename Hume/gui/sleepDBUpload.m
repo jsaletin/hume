@@ -120,6 +120,9 @@ if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.scoredinfo WHERE r
         
         % Proceed with overwriting:
         update(handles.conn, 'SleepLabStats.scoredinfo', {'finalscores','uploadedby','datemodified','statsin', 'epochlength','combiningrule','minremlength','latencyrule'}, [{handles.finalData.Value,handles.conn.UserName,datestr(clock,'yyyy-mm-dd HH:MM:SS'), 'Hume'}, num2cell([handles.stageStats.stageData.win, handles.stageStats.rules.combiningRule, handles.stageStats.rules.minREMlength,handles.stageStats.rules.onsetRule])], ['where record =''',handles.recordName.String,'''']);
+        
+        update(handles.conn, 'SleepLabStats.endOfNight', {'laststagesleep','awakeatlightson'},[{handles.stageStats.lastStageSleep,handles.stageStats.awakeLightsOn}], ['where record =''',handles.recordName.String,'''']);
+        
         update(handles.conn, 'SleepLabStats.lightsTimeInfo',{'lightsOff','lightsOn'}, [{datestr(handles.stageStats.stageData.lightsOFF,'HH:MM:SS'),datestr(handles.stageStats.stageData.lightsON,'HH:MM:SS')}], ['where record =''',handles.recordName.String,'''']);
         update(handles.conn, 'SleepLabStats.TDT', {'epochs','Minutes','TDTper','SPTper','TSTper'}, [(handles.stageStats.percentSleep(1,:))], ['where record =''',handles.recordName.String,'''']);
         update(handles.conn, 'SleepLabStats.SPT', {'epochs','Minutes','TDTper','SPTper','TSTper'}, [(handles.stageStats.percentSleep(2,:))], ['where record =''',handles.recordName.String,'''']);
@@ -282,7 +285,7 @@ else
     end
     
     insert(handles.conn, 'SleepLabStats.scoredInfo', {'record','edfname','scorer','finalscores','uploadedby','datemodified', 'statsin', 'epochlength','combiningrule','minremlength','latencyrule'},[{handles.recordName.String,handles.edfName.String,handles.scorer.String,handles.finalData.Value,handles.conn.UserName,datestr(clock,'yyyy-mm-dd HH:MM:SS'), 'Hume'}, num2cell([handles.stageStats.stageData.win, handles.stageStats.rules.combiningRule, handles.stageStats.rules.minREMlength,handles.stageStats.rules.onsetRule ])]);
-    
+    insert(handles.conn, 'SleepLabStats.endOfNight', {'record','laststagesleep','awakeatlightson'},[{handles.recordName.String,handles.stageStats.lastStageSleep,handles.stageStats.awakeLightsOn}]);
     % Enter Statistics
     insert(handles.conn, 'SleepLabStats.lightsTimeInfo',{'record','lightsOff','lightsOn'}, [{handles.recordName.String,datestr(handles.stageStats.stageData.lightsOFF,'HH:MM:SS'),datestr(handles.stageStats.stageData.lightsON,'HH:MM:SS')}]);
     insert(handles.conn, 'SleepLabStats.TDT', {'record','epochs','Minutes','TDTper','SPTper','TSTper'}, [{handles.recordName.String},num2cell(handles.stageStats.percentSleep(1,:))]);
