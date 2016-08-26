@@ -267,7 +267,7 @@ else
     if handles.finalData.Value == 1
         
         
-        if sum(cell2mat(fetch(handles.conn,['SELECT finalscores FROM SleepLabStats.scoredinfo WHERE edfname = ''FCCBABSL.EDF'';']))) == 1
+        if sum(cell2mat(fetch(handles.conn,['SELECT finalscores FROM SleepLabStats.scoredinfo WHERE edfname = ''',handles.edfName.String,''';']))) == 1
             
             recordOnRecord=fetch(handles.conn,['SELECT record FROM SleepLabStats.scoredinfo WHERE edfname = ''',handles.edfName.String,''' AND finalscores = 1;']);
             
