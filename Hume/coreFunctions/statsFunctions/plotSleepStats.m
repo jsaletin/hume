@@ -528,8 +528,10 @@ if(isfield(stageData, 'eventMat'))
             eventRow = [evW evMT evN evR evTST evSleepEx evWakeEx];
             
             report = [report, sprintf('<tr><td><b>%s</b></td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td></td><td>%d</td><td>%d</td></tr>\n', [LUT{eventToPlot(i),2},':'], eventRow)];
-            stageStats.events{i,1} = LUT{eventToPlot(i),2};
-            stageStats.events{i,2} = eventRow;           
+            stageStats.eventData.events{i,1} = LUT{eventToPlot(i),2};
+            stageStats.eventData.events{i,2} = eventRow;           
+            stageStats.eventData.eventTotals = eventSums;
+            stageStats.eventData.LUT = LUT;
     end
     report = [report, '</tr></table>'];
 

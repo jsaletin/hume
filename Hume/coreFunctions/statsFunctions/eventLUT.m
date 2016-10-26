@@ -28,7 +28,7 @@ LUT = {
     '[1]'   'Movement Arousal'
     '[2]'   'Transient Arousal'
     '[3]'   'Microsleep'
-    '[4]'   'Slow Eye Movsments'
+    '[4]'   'Slow Eye Movement'
     '[5]'   'Rapid Eye Movement'
     '[6]'   'Sleep Spindle'
     '[7]'   'K Complex'

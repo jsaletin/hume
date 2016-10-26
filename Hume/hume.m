@@ -63,7 +63,7 @@ fprintf(1,'Loading: Montages\n');
 addpath(genpath([fpath,'/montages']));
 fprintf(1,'Loading: Functions\n');
 addpath(genpath([fpath,'/coreFunctions']));
-javaaddpath(genpath([fpath,'/outsideToolboxes/dbDrivers/jtds-1/jtds-1.3.1.jar']));
+javaaddpath(([fpath,'/outsideToolboxes/dbDrivers/jtds-1/jtds-1.3.1.jar']));
 fprintf(1,'Loading: User Interface\n');
 addpath(genpath([fpath,'/gui']));
 
