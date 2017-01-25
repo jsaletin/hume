@@ -314,6 +314,9 @@ pack
 filename = get(handles.stageFileIN, 'String');
 if(exist(filename))
     stageData = loadStaging(handles, filename);
+    if isempty(stageData)
+        stageData.srate = EEG.srate;
+    end
 else
     stageData = [];
     stageData.srate = EEG.srate;
@@ -368,6 +371,11 @@ if(~isstruct(stageFile))
 else
     stageData = stageFile;
 end
+
+if ~exist('stageData')
+    stageData=[];
+end
+
 if(isfield(stageData, 'win'))
     set(handles.winIN, 'String', num2str(stageData.win))
     set(handles.winIN, 'Enable', 'off')

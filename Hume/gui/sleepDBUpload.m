@@ -221,6 +221,15 @@ if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.scoredinfo WHERE r
         update(handles.conn, 'SleepLabStats.transitionsFromREM', { 'Wake', 'S1', 'S2', 'S3', 'S4', 'REM', 'MT', 'SW'}, [([handles.stageStats.transTableAll(6,:) handles.stageStats.transTableCollapse(5,4)])], ['where record =''',handles.recordName.String,'''']);
         update(handles.conn, 'SleepLabStats.transitionsFromMT', { 'Wake', 'S1', 'S2', 'S3', 'S4', 'REM', 'MT', 'SW'}, [([handles.stageStats.transTableAll(7,:) handles.stageStats.transTableCollapse(6,4)])], ['where record =''',handles.recordName.String,'''']);
         update(handles.conn, 'SleepLabStats.transitionsFromSW', { 'Wake', 'S1', 'S2', 'SW', 'REM', 'MT'}, [([handles.stageStats.transTableCollapse(4,:)])], ['where record =''',handles.recordName.String,'''']);
+
+        % Events
+        for i = 1:size(handles.stageStats.eventData.events)
+            switch handles.stageStats.eventData.events{i,1}
+                case 'Movement Arousal'
+                    update(handles.conn, 'SleepLabStats.eventsMvtArousals', {'sptWake', 'sptMT', 'sptNREM', 'sptREM', 'sptTST', 'nsptSleep', 'nsptWake'}, [([handles.stageStats.eventData.events{i,2}])], ['where record =''',handles.recordName.String,'''']);
+                    
+            end
+        end
         
     end
     
@@ -385,6 +394,15 @@ else
     insert(handles.conn, 'SleepLabStats.transitionsFromREM', {'record', 'Wake', 'S1', 'S2', 'S3', 'S4', 'REM', 'MT', 'SW'}, [{handles.recordName.String},num2cell([handles.stageStats.transTableAll(6,:) handles.stageStats.transTableCollapse(5,4)])]);
     insert(handles.conn, 'SleepLabStats.transitionsFromMT', {'record', 'Wake', 'S1', 'S2', 'S3', 'S4', 'REM', 'MT', 'SW'}, [{handles.recordName.String},num2cell([handles.stageStats.transTableAll(7,:) handles.stageStats.transTableCollapse(6,4)])]);
     insert(handles.conn, 'SleepLabStats.transitionsFromSW', {'record', 'Wake', 'S1', 'S2', 'SW', 'REM', 'MT'}, [{handles.recordName.String},num2cell([handles.stageStats.transTableCollapse(4,:)])]);
+
+    % Events
+    for i = 1:size(handles.stageStats.eventData.events)
+        switch handles.stageStats.eventData.events{i,1}
+            case 'Movement Arousal'
+                insert(handles.conn, 'SleepLabStats.eventsMvtArousals', {'record', 'sptWake', 'sptMT', 'sptNREM', 'sptREM', 'sptTST', 'nsptSleep', 'nsptWake'}, [{handles.recordName.String},num2cell([handles.stageStats.eventData.events{i,2}])]);
+
+        end
+    end
 end
 waitfor(msgbox('Upload complete!'));
 close(handles.gui);

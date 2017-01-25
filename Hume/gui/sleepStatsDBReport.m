@@ -178,7 +178,10 @@ else
     set(handles.allIDs', 'Value', 0);
     allIDs_Callback(handles.allConds,[],handles);
 end
-
+format short e
+for i = 1:length(idsOnRecord)
+    idsOnRecord{i} = num2str(idsOnRecord{i});
+end
 set(handles.idList, 'String', idsOnRecord);
 guidata(hObject, handles);
 
