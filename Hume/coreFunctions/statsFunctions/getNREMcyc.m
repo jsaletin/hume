@@ -79,9 +79,13 @@ while(startCyc <= length(sleep))
     c = c + 1;
 end
 
+% Bugfix 2/6/17 -- when only one cycle...(per email between JMS and BAM).
+if size(cycleBounds,1) > 1
+    
 if cycleBounds(size(cycleBounds,1),3) == cycleBounds(size(cycleBounds,1)-1,3)
     
     cycleBounds(size(cycleBounds,1)-1,3) = cycleBounds(size(cycleBounds,1)-1,3) - 1;
+end
 end
 
 
