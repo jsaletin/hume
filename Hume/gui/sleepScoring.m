@@ -146,8 +146,9 @@ if isfield(handles,'stageData')
     elseif(c == 7)
         arrowLeftB_Callback(handles.arrowLeftB, [], handles);
     elseif(c == 9)
-        
         arrowRightB_Callback(handles.arrowRightB, [], handles);
+    elseif(strcmp(cStr, 'x'))
+        Artifact_Callback(handles.Artifact, [], handles);
     end
 end
 
@@ -424,6 +425,9 @@ if(~(handles.stageData.recStart < handles.stageData.lightsOFF))
 end
 
 handles.stageData.srate = srate;
+if(~isfield(handles.stageData, 'Notes'))
+    handles.stageData.Notes = '';
+end
 
 if(~isfield(handles.stageData, 'stages'))
     handles.stageData.stages = ones(ceil(size(handles.EEG.data, 2)/(winSize*srate)), 1)*7;
@@ -688,7 +692,7 @@ scales = handles.CurrMontage.scale;
 
 eventData = {label, cursorData.Position(1), ...
     ceil(cursorData.Position(1)/handles.stageData.srate/handles.stageData.win), ...
-    (cursorData.Position(2) - cursTag)*-1/(150/str2num(scales{cursTag/150}));}
+    (cursorData.Position(2) - cursTag)*-1/(150/str2num(scales{cursTag/150}))};
 
 if ~isfield(handles.stageData, 'MarkedEvents')
     handles.stageData.MarkedEvents = eventData;
@@ -1361,9 +1365,49 @@ function humeWindow_CloseRequestFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
 % Hint: delete(hObject) closes the figure
 button = questdlg('Are you sure you want to quit Húmë?','Quit Húmë?','Yes','No','Yes');
 if strcmp(button,'Yes')
     signOut_Callback(hObject,[],handles);
     closereq;
 end
+
+% --- Executes on button press in Artifact.
+function Artifact_Callback(hObject, eventdata, handles)
+% hObject    handle to Artifact (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+Value = handles.currentArtifact;
+if Value
+    
+    curWin = xlim(handles.axes1);
+    ep = floor(curWin(2)/(handles.stageData.win*handles.EEG.srate));
+    if isfield(handles.stageData, 'MarkedEvents')
+       handles.stageData.MarkedEvents(find(cell2mat(handles.stageData.MarkedEvents(:,3))==ep),:) =[];
+    end
+ %   set(hObject,'Value',0)
+    handles.currentArtifact = 0;
+    set(handles.axes1,'Color',[1 1 1])
+    curX = xlim(handles.axes1);
+    range = curX(1):curX(2);
+    handles = plotSleepData(handles, range);
+else
+  %  set(hObject,'Value',1)
+    handles.currentArtifact = 1;
+    set(handles.axes1,'Color',[1 .95 .95])
+    curWin = xlim(handles.axes1);
+    ep = floor(curWin(2)/(handles.stageData.win*handles.EEG.srate));
+    eventData = {'[0]', curWin(1), ep, NaN};
+    
+    if ~isfield(handles.stageData, 'MarkedEvents')
+        handles.stageData.MarkedEvents = eventData;
+    else
+        handles.stageData.MarkedEvents = [handles.stageData.MarkedEvents; eventData];
+    end
+    curX = xlim(handles.axes1);
+    range = curX(1):curX(2);
+    handles = plotSleepData(handles, range);
+end
+guidata(hObject,handles);
+% Hint: get(hObject,'Value') returns toggle state of Artifact

@@ -86,22 +86,36 @@ maxY = plotSpace*(length(electrodes) + .75);
 set(h, 'Ylim', [plotSpace/4, maxY], 'YTick', plotSpace:plotSpace:(maxY), 'YTickLabel', electrodes)
 
 %% This section checks for any USER events in the current data range and plots them
-
+%set(handles.Artifact,'Value',0);
+handles.currentArtifact = 0;
+set(handles.axes1,'Color',[1 1 1]);
 %checks for events
 if(isfield(handles.stageData, 'MarkedEvents'))
     ylimVal = ylim(h);
     labels = unique(handles.stageData.MarkedEvents(:,1));
-    
+
     %loops through all the labels in the events struct
     for l = 1:length(labels)
+           
+
+            
        %gets the data from the current label
        cur = cell2mat(handles.stageData.MarkedEvents(find(ismember(handles.stageData.MarkedEvents(:,1),labels(l))),2:3));
        
        %checks for any events that are in the current range
        curEvents = cur(cur(:, 1) >= range(1) & cur(:, 1) <= range(end), :);
        
+        %Artifacts
+        if and(strcmp(labels{l},'[0]'),size(curEvents,1))
+            handles.currentArtifact = 1;
+            set(handles.axes1,'Color',[1 .95 .95]);
+        end
+        
        %plots all the events in the current range
        for c  = 1:size(curEvents, 1)
+           
+
+           
            m = plot(h, [curEvents(c, 1), curEvents(c, 1)], ylimVal, 'k', 'LineWidth', 2);
            set(m, 'Tag', labels{l});
            if(gca ~= h)
@@ -111,6 +125,10 @@ if(isfield(handles.stageData, 'MarkedEvents'))
        end
     end
 end
+
+%% CONTROL ARTIFACTS
+
+
 
 %% NOTATION EVENTS
 
@@ -164,7 +182,9 @@ for t = 2:numTicks
     
 end
 
-set(h, 'XTick', newX(1):10*srate:newX(2), 'XTickLabel', tickStrs, 'XGrid', 'on','XMinorGrid','on','Gridlinestyle','-.');
+set(h, 'XTick', newX(1):10*srate:newX(2), 'XTickLabel', tickStrs, 'XGrid', 'on','XMinorGrid','on','Gridlinestyle','-');
+h.XAxis.MinorTickValues = [newX(1):1*srate:newX(2)];
+
 set(gca, 'Ticklength', [0 0])
 %% this section plot lights on and lights off lines
 
