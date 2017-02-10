@@ -1389,6 +1389,7 @@ if Value
  %   set(hObject,'Value',0)
     handles.currentArtifact = 0;
     set(handles.axes1,'Color',[1 1 1])
+    set(handles.Artifact,'BackgroundColor',[1 1 1]);
     curX = xlim(handles.axes1);
     range = curX(1):curX(2);
     handles = plotSleepData(handles, range);
@@ -1396,6 +1397,7 @@ else
   %  set(hObject,'Value',1)
     handles.currentArtifact = 1;
     set(handles.axes1,'Color',[1 .95 .95])
+    set(handles.Artifact,'BackgroundColor',[1 .95 .95]);
     curWin = xlim(handles.axes1);
     ep = floor(curWin(2)/(handles.stageData.win*handles.EEG.srate));
     eventData = {'[0]', curWin(1), ep, NaN};

@@ -89,6 +89,7 @@ set(h, 'Ylim', [plotSpace/4, maxY], 'YTick', plotSpace:plotSpace:(maxY), 'YTickL
 %set(handles.Artifact,'Value',0);
 handles.currentArtifact = 0;
 set(handles.axes1,'Color',[1 1 1]);
+set(handles.Artifact,'BackgroundColor',[1 1 1]);
 %checks for events
 if(isfield(handles.stageData, 'MarkedEvents'))
     ylimVal = ylim(h);
@@ -108,6 +109,7 @@ if(isfield(handles.stageData, 'MarkedEvents'))
         %Artifacts
         if and(strcmp(labels{l},'[0]'),size(curEvents,1))
             handles.currentArtifact = 1;
+            set(handles.Artifact,'BackgroundColor',[1 .95 .95]);
             set(handles.axes1,'Color',[1 .95 .95]);
         end
         
