@@ -96,7 +96,7 @@ set(handles.plotSleepIN, 'String', montages)
 eval(['handles.CurrMontage = ',montages{1}, ';']);
 
 % Set Notes list based on notes directory
-noteNames = dir(fullfile(fileparts(sleepPath), 'noteReader'));
+noteNames = dir(fullfile(fileparts(sleepPath), 'coreFunctions/noteReader'));
 notes = {'Notes'};
 for i = 1:length(noteNames)
     if(strfind(noteNames(i).name, '_LoadNotes.m'))

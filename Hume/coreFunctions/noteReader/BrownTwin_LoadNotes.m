@@ -94,7 +94,7 @@ elseif(stageData.recStart ~= recStart)
 end
 
 nLoff = recStart + (stageData.ImportEvents.LightsOut(1)/stageData.srate)/86400;
-if(~isfield(stageData, 'lightsOFF'))
+if(~isfield(stageData, 'lightsOut'))
     stageData.lightsOFF = nLoff;
     
 elseif(stageData.lightsOFF ~= nLoff)
@@ -105,7 +105,7 @@ end
 
 
 nLon = recStart + (stageData.ImportEvents.LightsOn(1)/stageData.srate)/86400;
-if(~isfield(stageData, 'lightsON'))
+if(~isfield(stageData, 'lightsOn'))
     stageData.lightsON = nLon;
     
 elseif(stageData.lightsON ~= nLon)

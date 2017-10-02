@@ -805,10 +805,11 @@ else
     splitterEnd = splitter + 1;
 end
 
+
 for r = 1:splitterEnd
     
-    if(r*q < length(stages))
-        breaks(r, :) = [((r-1)*q + 1), (r*q)];
+    if(r < splitterEnd)
+        breaks(r, :) = [((r-1)*q + 1), min((r*q), length(stages))];
     else
         breaks(r, :) = [((r-1)*q + 1), length(stages)];
     end
