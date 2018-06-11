@@ -377,14 +377,14 @@ stageStats.percentSleep(17, :) = [Anom, (Anom*win)/60, Anom/TDTepoch, Anom/SPTep
 report = [report, '</table>'];
 
 %% Sleep distributions chart
-
-plotSleepDist(stageStats.percentSleep);
-set(gcf, 'PaperPositionMode', 'auto');
-saveas(gcf, [outname, '_SPdist.png'], 'png')
-close(gcf);
-report = [report, '</td><td>'];
-report = [report, sprintf('<img src=''%s''>', [outname, '_SPdist.png'])]; 
-report = [report, '</td></table>'];
+% 
+% plotSleepDist(stageStats.percentSleep);
+% set(gcf, 'PaperPositionMode', 'auto');
+% saveas(gcf, [outname, '_SPdist.png'], 'png')
+% close(gcf);
+% report = [report, '</td><td>'];
+% report = [report, sprintf('<img src=''%s''>', [outname, '_SPdist.png'])]; 
+% report = [report, '</td></table>'];
 
 
 %%   Latencies Table %%
@@ -572,9 +572,17 @@ report = [report, '</td></tr></table><br>'];
 %% Cycle stats
 report = [report, '<hr><h2>Cycle Analysis:</h2>'];
 
+%% Calculate split of first Cycle according to Jenni 2004 (split first period if no SWA for 12 minutes)
+nonSWmin = 12;
+[cycleBounds, NREMsegs, REMsegs] = getNREMcyc_splitJenni(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage, nonSWmin);
+cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
+stageStats.cycleBoundsJenniSplit = cycleBounds;
+
+%% Normal Split 
 [cycleBounds, NREMsegs, REMsegs] = getNREMcyc(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage);
 cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
 stageStats.cycleBounds = cycleBounds;
+
 for i = 1:length(NREMsegs)
     stageStats.NREMsegs{i} = NREMsegs{i} + sleepLat - 1;
 end

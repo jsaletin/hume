@@ -67,7 +67,12 @@ for i = 1:length(notes)
         curPoint = etime(datevec(curTime), datevec(recStart))*stageData.srate;
         etime(datevec(curTime), datevec(recStart));
         dataOut = [curPoint, 0, 0];
-
+        if strcmp(tail(2:end),'LightsOut')
+            nLoff = datenum([head(2:end), '0'], curTime);
+        elseif strcmp(tail(2:end),'LightsOn')
+            nLon = datenum([head(2:end), '0'], curTime);
+        end
+        
         if(isfield(stageData.ImportEvents, tail(2:end)))
             cur = eval(['stageData.ImportEvents.', tail(2:end), ';']);
             dataOut = [cur; dataOut];
@@ -93,7 +98,7 @@ elseif(stageData.recStart ~= recStart)
     fprintf('The origional recording start (%s) does not match the notes recording start (%s) (Using origional record start)', inputRecStart, notesRecStart);
 end
 
-nLoff = recStart + (stageData.ImportEvents.LightsOut(1)/stageData.srate)/86400;
+%nLoff = recStart + (stageData.ImportEvents.LightsOut(1)/stageData.srate)/86400;
 if(~isfield(stageData, 'lightsOut'))
     stageData.lightsOFF = nLoff;
     
@@ -101,10 +106,10 @@ elseif(stageData.lightsOFF ~= nLoff)
     inputRecStart = datestr(stageData.lightsOFF, 'HH:MM:SS.FFF');
     notesRecStart = datestr(nLoff, 'HH:MM:SS.FFF');
     fprintf('The origional lights off (%s) does not match the notes lights off (%s) (Using origional lights off)', inputRecStart, notesRecStart);
-end  
+end
 
 
-nLon = recStart + (stageData.ImportEvents.LightsOn(1)/stageData.srate)/86400;
+%nLon = recStart + (stageData.ImportEvents.LightsOn(1)/stageData.srate)/86400;
 if(~isfield(stageData, 'lightsOn'))
     stageData.lightsON = nLon;
     
@@ -112,7 +117,7 @@ elseif(stageData.lightsON ~= nLon)
     inputRecStart = datestr(stageData.lightsON, 'HH:MM:SS.FFF');
     notesRecStart = datestr(nLon, 'HH:MM:SS.FFF');
     fprintf('The origional lights on (%s) does not match the notes lights on (%s) (Using origional lights on)', inputRecStart, notesRecStart);
-end  
+end
 
 
 
