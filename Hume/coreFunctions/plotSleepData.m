@@ -184,7 +184,7 @@ for t = 2:numTicks
     
 end
 
-set(h, 'XTick', newX(1):10*srate:newX(2), 'XTickLabel', tickStrs, 'XGrid', 'on','XMinorGrid','on','Gridlinestyle','-');
+set(h, 'XTick', newX(1):10*srate:newX(2), 'XTickLabel', tickStrs, 'XGrid', 'on','XMinorGrid','on','Gridlinestyle','-','GridAlpha',0.75,'MinorGridAlpha',.75);
 h.XAxis.MinorTickValues = [newX(1):1*srate:newX(2)];
 
 set(gca, 'Ticklength', [0 0])

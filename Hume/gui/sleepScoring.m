@@ -302,6 +302,7 @@ if(strcmp(filename((end - 3):end), '.mat'))
     load(filename);
 elseif(strcmp(filename((end - 3):end), '.edf') || strcmp(filename((end - 3):end), '.EDF'))
     EEG = pop_biosig(filename);
+    set(handles.recStartIN,'String',datestr(EEG.etc.T0,'hhmmss.fff'));
 elseif(strcmp(filename((end - 3):end), '.set'))
     EEG = pop_loadset(filename);
 else
@@ -798,6 +799,14 @@ function browse_stg_B_Callback(hObject, eventdata, handles)
 [fileName, filePath] = uigetfile({'*.mat','MAT-files (*.mat)'; '*.*',  'All Files (*.*)'}, 'Sleep Stage File');
 set(handles.stageFileIN, 'String', fullfile(filePath,fileName));
 
+% --- Executes on button press in load_Stg_B.
+function load_Stg_B_Callback(hObject, eventdata, handles)
+% hObject    handle to load_Stg_B (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[fileName, filePath] = uiputfile({'*.mat','MAT-files (*.mat)'; '*.*',  'All Files (*.*)'}, 'Sleep Stage File');
+set(handles.stageFileIN, 'String', fullfile(filePath,fileName));
+
 % --- Executes on button press in browse_note_B.
 function browse_note_B_Callback(hObject, eventdata, handles)
 % hObject    handle to browse_note_B (see GCBO)
@@ -1239,7 +1248,11 @@ function openData_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to openData (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if strcmp(get(handles.setupPan,'Visible'),'on')
+    set(handles.setupPan,'Visible','off');
+else
 set(handles.setupPan, 'Visible', 'on')
+end
 
 
 % --------------------------------------------------------------------
