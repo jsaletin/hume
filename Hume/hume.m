@@ -87,5 +87,14 @@ if exist('nansum.m') ~= 2
     fprintf(1,'Loading: nan functions\n');
 
 end
+
+% Check for plotSpikeRaster
+
+if exist('plotSpikeRaster.m') ~= 2
     
+    addpath([fpath,'/outsideToolboxes/misc/plotSpikeRaster']);
+    fprintf(1,'Loading: plotSpikeRaster functions\n');
+   
+end
+
 sleepScoring;

@@ -302,7 +302,7 @@ if(strcmp(filename((end - 3):end), '.mat'))
     load(filename);
 elseif(strcmp(filename((end - 3):end), '.edf') || strcmp(filename((end - 3):end), '.EDF'))
     EEG = pop_biosig(filename);
-    set(handles.recStartIN,'String',datestr(EEG.etc.T0,'HHMMSS.FFF'));
+    set(handles.recStartIN,'String',datestr(EEG.etc.T0,'HH.fff'));
 elseif(strcmp(filename((end - 3):end), '.set'))
     EEG = pop_loadset(filename);
 else

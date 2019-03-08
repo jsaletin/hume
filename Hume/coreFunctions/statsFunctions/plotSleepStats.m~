@@ -521,13 +521,12 @@ if(isfield(stageData, 'eventMat'))
             
                 
             % SPT
-            evSPT = ev(sleepLat:sleepEnd);
             stagesSPT = stages(sleepLat:sleepEnd);
-            evR = nansum(evSPT((stagesSPT==5)));
-            evN = nansum(evSPT((and(stagesSPT>=1 , stagesSPT<=4))));
-            evW = nansum(evSPT((stagesSPT==0))); 
+            evR = nansum(ev((stagesSPT==5)));
+            evN = nansum(ev((and(stagesSPT>=1 , stagesSPT<=4))));
+            evW = nansum(ev((stagesSPT==0))); 
             evTST = evR+evN;
-            evMT = nansum(evSPT((stagesSPT==6)));
+            evMT = nansum(ev((stagesSPT==6)));
             
             eventRow = [evW evMT evN evR evTST evSleepEx evWakeEx];
             
