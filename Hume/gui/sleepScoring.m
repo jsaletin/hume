@@ -305,6 +305,7 @@ elseif(strcmp(filename((end - 3):end), '.edf') || strcmp(filename((end - 3):end)
     set(handles.recStartIN,'String',datestr(EEG.etc.T0,'HHMMSS.FFF'));
 elseif(strcmp(filename((end - 3):end), '.set'))
     EEG = pop_loadset(filename);
+    set(handles.recStartIN,'String',datestr(EEG.etc.T0,'HHMMSS.FFF'));
 else
     display('CAN NOT OPEN FILE: don''t recognise file ending')
 end
@@ -1426,3 +1427,12 @@ else
 end
 guidata(hObject,handles);
 % Hint: get(hObject,'Value') returns toggle state of Artifact
+
+
+% --------------------------------------------------------------------
+function eventCodes_m_Callback(hObject, eventdata, handles)
+% hObject    handle to eventCodes_m (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+msg = 'hi';
+msgbox(msg, 'Hot Keys');

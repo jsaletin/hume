@@ -63,6 +63,10 @@ if size(varargin, 2) == 2
     handles.conn = varargin{1};
     
     studiesOnRecord = fetch(handles.conn,['SELECT DISTINCT SleepLabStats.idStudy.study FROM SleepLabStats.EDFInfo JOIN SleepLabStats.idStudy ON SleepLabStats.EDFInfo.id = SleepLabStats.idStudy.id JOIN SleepLabStats.scoredInfo ON SleepLabStats.scoredInfo.EDFname = SleepLabStats.EDFInfo.EDFname']);
+    if  strmatch(class(studiesOnRecord),'table')
+        studiesOnRecord = table2cell(studiesOnRecord);
+    end
+    
     set(handles.studyList,'String',studiesOnRecord);
     
     %     idsOnRecord = fetch(handles.conn, ['SELECT DISTINCT SleepLabStats.EDFInfo.id FROM SleepLabStats.scoredInfo JOIN SleepLabStats.EDFInfo ON SleepLabStats.scoredInfo.EDFname = SleepLabStats.EDFInfo.EDFname;']);
@@ -132,6 +136,9 @@ function studyList_Callback(hObject, eventdata, handles)
 studyList = hObject.String(hObject.Value);
 if ~isempty(studyList)
     conditionsOnRecord = fetch(handles.conn,['SELECT DISTINCT SleepLabStats.EDFInfo.condition FROM SleepLabStats.scoredInfo JOIN SleepLabStats.EDFInfo ON SleepLabStats.scoredInfo.EDFname = SleepLabStats.EDFInfo.EDFname  JOIN SleepLabStats.idStudy ON SleepLabStats.EDFInfo.id = SleepLabStats.idStudy.id WHERE SleepLabStats.idStudy.study IN (', strjoin(strcat('''',studyList,''''),', '), ');']);
+    if strcmp(class(conditionsOnRecord), 'table')
+        conditionsOnRecord = table2cell(conditionsOnRecord);
+    end
 else
     conditionsOnRecord = '';
     set(handles.allConds', 'Value', 0);
@@ -168,6 +175,9 @@ if ~isempty(hObject.String)
     if ~isempty(condList)
         studyList = handles.studyList.String(handles.studyList.Value);
         idsOnRecord = fetch(handles.conn,['SELECT DISTINCT SleepLabStats.idStudy.id FROM SleepLabStats.scoredInfo JOIN SleepLabStats.EDFInfo ON SleepLabStats.scoredInfo.EDFname = SleepLabStats.EDFInfo.EDFname  JOIN SleepLabStats.idStudy ON SleepLabStats.EDFInfo.id = SleepLabStats.idStudy.id WHERE SleepLabStats.idStudy.study IN (', strjoin(strcat('''',studyList,''''),', '), ') AND SleepLabStats.EDFInfo.Condition IN (', strjoin(strcat('''',condList,''''),', '), ') ;']);
+        if strmatch(class(idsOnRecord),'table')
+            idsOnRecord = table2cell(idsOnRecord);
+        end
     else
         idsOnRecord = '';
         set(handles.allIDs', 'Value', 0);
@@ -221,6 +231,9 @@ if ~isempty(studyList) & ~isempty(condList) & ~isempty(idList)
         'AND SleepLabStats.idStudy.study IN (',strjoin(strcat('''',studyList,''''),', '), ') ', ....
         'AND SleepLabStats.scoredInfo.finalScores = ',num2str(handles.finalOnly.Value),';']);
     
+    if strcmp(class(recordList), 'table') 
+        recordList = table2cell(recordList);
+    end
     
     reportType = 1;
     eval(['[reportName, statistics] = ',handles.reportFuncs{handles.templates.Value},'(recordList);']);
