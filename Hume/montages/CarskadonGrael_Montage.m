@@ -28,12 +28,18 @@ function handles = sleep_Montage(handles)
 handles.hideChans = {};
 %electrode names that should be ploted.
 handles.electrodes = flipud({'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'EMG 1-EMG 2';'C4-A1';'O1-A2';});
+% channels to plot negative up
+handles.negChans = {'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'EMG 1-EMG 2';'C4-A1';'O1-A2';};
+% channels to plot as second-to-second numeric data (e.g., SpO2) data
+handles.o2satChs = {};
 %colors for each electrode. The order and length must match the electrode list
 handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];});
 %scale for each electrode. The order and length must match the electrode list
 handles.scale = flipud({'150';'150';'150';'150';'150';'150';'150';});
 % channels to add scale lines to
 handles.scaleChans = {'C3-A2' 'C4-A1' };
+% channels to plot as second-to-second numeric data (e.g., SpO2) data
+handles.o2satChs = {};
 % voltage to place scales
 handles.bigGridMat{1,1} = 'C3-A2';
 handles.bigGridMat{1,2}{1,1} = '-75';

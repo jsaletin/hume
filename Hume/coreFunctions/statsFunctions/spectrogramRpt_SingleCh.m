@@ -43,8 +43,12 @@ function h0 = spectrogramRpt_SingleCh(EEG,ch, stageStats)
 EEG = pop_select(EEG,'channel',find(strcmp({EEG.chanlocs.labels},ch)));
 
 if ~isempty(stageStats)
+    
     % Removes unscored data
     stageData = stageStats.stageData; 
+    
+    % Epochs marked artifact
+    artifactEpochs=[stageData.MarkedEvents{strcmp(stageData.MarkedEvents(:,1),'[0]'),3}];
     
     % Window definition
     win = stageStats.stageData.win;% stageData.win
@@ -71,6 +75,7 @@ end
 
 %% PWELCH
 
+artifactEpochs = (artifactEpochs - firstEp)+1;
 data = EEG.data;
 data = buffer(data,30*EEG.srate,0)';
 nfft=5*EEG.srate;
@@ -79,6 +84,7 @@ for i = 1:size(data,1)
     [pxx] = pwelch(data(i,:), 5*EEG.srate, [], 5*EEG.srate, EEG.srate);
     spect(i,:) = pxx;
 end
+spect(artifactEpochs,:) = nan;
 spect=spect';
 Flims = [.05 20];
 f = (0:1/(nfft/EEG.srate):EEG.srate/2);
@@ -138,10 +144,10 @@ c.Label.String = 'Power (db)';
 
 delta = trapz(spect(and(f>=.5,f<=4.75),:),1);
 if ~isempty(stageStats)
-    delta = (delta./mean(delta( intersect(stageStats.milestones(1,1):stageStats.milestones(2,1), find(and(stages>1,stages<5))) )))*100;
+    delta = (delta./nanmean(delta( intersect(stageStats.milestones(1,1):stageStats.milestones(2,1), find(and(stages>1,stages<5))) )))*100;
     legendText = ('% Whole Night NREM');
 else
-    delta = (delta./mean(delta))*100;
+    delta = (delta./nanmean(delta))*100;
     legendText = ('% Whole Night');
 end
 
@@ -185,10 +191,10 @@ end
 
 sigma = trapz(spect(and(f>=11.9,f<=15.1),:),1);
 if ~isempty(stageStats)
-    sigma = (sigma./mean(sigma( intersect(stageStats.milestones(1,1):stageStats.milestones(2,1), find(and(stages>1,stages<5))) )))*100;
+    sigma = (sigma./nanmean(sigma( intersect(stageStats.milestones(1,1):stageStats.milestones(2,1), find(and(stages>1,stages<5))) )))*100;
     legendText = ('% Whole Night NREM');
 else
-    sigma = (sigma./mean(sigma))*100;
+    sigma = (sigma./nanmean(sigma))*100;
     legendText = ('% Whole Night');
 end
 

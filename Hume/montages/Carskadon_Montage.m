@@ -28,6 +28,7 @@ function handles = sleep_Montage(handles)
 handles.hideChans = {};
 %electrode names that should be ploted.
 handles.electrodes = flipud({'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'Chin EMG 1-Chin';'C4-A1';'O1-A2';});
+
 %colors for each electrode. The order and length must match the electrode list
 handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];});
 %scale for each electrode. The order and length must match the electrode list

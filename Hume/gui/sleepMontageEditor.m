@@ -24,7 +24,7 @@ function varargout = sleepMontageEditor(varargin)
 
 % Edit the above text to modify the response to help sleepMontageEditor
 
-% Last Modified by GUIDE v2.5 15-Jan-2015 22:35:37
+% Last Modified by GUIDE v2.5 12-Jun-2020 15:58:16
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -61,11 +61,11 @@ for ch=1:14
 end
 
 defaultGridMat = {
-    '-50'   [0 .5 0]
-    '-25'   [0 .5 0]
+    '-75'   [0 .5 0]
+    '-37.5'   [0 .5 0]
     '0'     [0 .5 0]
-    '25'    [0 .5 0]
-    '50'    [0 .5 0]};
+    '37.5'    [0 .5 0]
+    '75'    [0 .5 0]};
 
 for i = 1:14
 
@@ -77,17 +77,21 @@ CurrMontage = varargin{1}.CurrMontage;
 
 bigGridMat = CurrMontage.bigGridMat;
 hideChs = CurrMontage.hideChans;
+negChs = CurrMontage.negChans;
 electrodes = flipud(CurrMontage.electrodes);
 colors = flipud(CurrMontage.colors);
 scale = flipud(CurrMontage.scale);
 ampChs = CurrMontage.scaleChans;
+o2satChs = CurrMontage.o2satChs;
 
 handles.montage.bigGridMat = bigGridMat;
 handles.montage.hideChans = hideChs;
+handles.montage.negChs = negChs;
 handles.montage.electrodes = CurrMontage.electrodes;
 handles.montage.colors = CurrMontage.colors;
 handles.montage.scale = CurrMontage.scale;
 handles.montage.scaleChans = ampChs;
+handles.montage.o2satChs = o2satChs;
 
 errCode = 0;
 for e=1:length(electrodes)
@@ -116,6 +120,34 @@ for e = 1:length(hideChs)
     end
     eval(['set(handles.hide',num2str(i),',''Value'', 1);']);
 
+end
+
+for e = 1:length(negChs)
+
+    i = find(ismember(electrodes,negChs{e}));
+    if isempty(i)
+        errCode=1;
+        break
+    end
+    eval(['set(handles.neg',num2str(i),',''Value'', 1);']);
+
+end
+
+for e = 1:length(o2satChs)
+
+    i = find(ismember(electrodes,o2satChs{e}));
+    if isempty(i)
+        errCode=1;
+        break
+    end
+    eval(['set(handles.o2sat',num2str(i),',''Value'', 1);']);
+    eval(['set(handles.amp',num2str(i),',''Enable'', ''off'');']);
+    eval(['set(handles.hide',num2str(i),',''Enable'', ''off'');']);
+    eval(['set(handles.color',num2str(i),',''Enable'', ''off'');']);
+    eval(['set(handles.setGrid',num2str(i),',''Enable'', ''off'');']);
+    eval(['set(handles.scale',num2str(i),',''Enable'', ''off'');']);
+    eval(['set(handles.neg',num2str(i),',''Enable'', ''off'');']);
+    
 end
 
 for e = 1:length(ampChs)
@@ -1087,6 +1119,8 @@ colors = '{';
 ampChs = '{';
 scaleChs = '{';
 hideChs = '{';
+o2satChs = '{';
+negChs = '{';
 
 g=0;
 for e = 1:14
@@ -1105,6 +1139,11 @@ for e = 1:14
             hideChs = [hideChs,'''',channel{1},''' '];
         end
         
+        eval(['neg = get(handles.neg',num2str(e),', ''Value'');']);
+        if neg == 1
+            negChs = [negChs,'''',channel{1},''' '];
+        end
+        
         eval(['val = get(handles.scale',num2str(e),', ''Value'');']);
         eval(['scaleSet = get(handles.scale',num2str(e),', ''String'');']);
         scale = scaleSet(val);
@@ -1117,20 +1156,29 @@ for e = 1:14
             bigGridMat{g,1} = channel{1};
             eval(['bigGridMat{g,2} = handles.gridMat',num2str(e),';']);
         end
+        
+        eval(['o2sat = get(handles.o2sat',num2str(e),', ''Value'');']);
+        if o2sat == 1
+            o2satChs = [o2satChs,'''',channel{1},''' '];
+        end
     end
 
 end
 channels = [channels,'}'];
 hideChs = [hideChs,'}'];
+negChs = [negChs,'}'];
 ampChs = [ampChs,'}'];
 colors = [colors,'}'];
 scale =[scaleChs,'}'];
+o2satChs=[o2satChs,'}'];
 
 eval(['handles.montage.hideChans = ',hideChs,';']);
+eval(['handles.montage.negChans = ',negChs,';']);
 eval(['handles.montage.scale = flipud(',scale,');']); 
 eval(['handles.montage.colors = flipud(',colors,');']);
 eval(['handles.montage.electrodes = flipud(',channels,');']); 
 eval(['handles.montage.scaleChans = flipud(',ampChs,');']); 
+eval(['handles.montage.o2satChs = flipud(',o2satChs,');']);
 
 for i = 1:size(bigGridMat,1)
 
@@ -1188,7 +1236,8 @@ colors = '{';
 ampChs = '{';
 scaleChs = '{';
 hideChs = '{';
-
+o2satChs = '{';
+negChs = '{';
 g=0;
 for e = 1:14
     
@@ -1206,6 +1255,11 @@ for e = 1:14
             hideChs = [hideChs,'''',channel{1},''' '];
         end
         
+        eval(['neg = get(handles.neg',num2str(e),', ''Value'');']);
+        if hide == 1
+            negChs = [negChs,'''',channel{1},''' '];
+        end
+        
         eval(['val = get(handles.scale',num2str(e),', ''Value'');']);
         eval(['scaleSet = get(handles.scale',num2str(e),', ''String'');']);
         scale = scaleSet(val);
@@ -1218,14 +1272,21 @@ for e = 1:14
             bigGridMat{g,1} = channel{1};
             eval(['bigGridMat{g,2} = handles.gridMat',num2str(e),';']);
         end
+        
+        eval(['o2sat = get(handles.o2sat',num2str(e),', ''Value'');']);
+        if hide == 1
+            o2satChs = [o2satChs,'''',channel{1},''' '];
+        end
     end
 
 end
 channels = [channels,'}'];
 hideChs = [hideChs,'}'];
+negChs = [negChs,'}'];
 ampChs = [ampChs,'}'];
 colors = [colors,'}'];
 scaleChs =[scaleChs,'}'];
+o2satChs = [o2satChs,'}'];
 
 montageFile = [montageFile,sprintf('handles.hideChans = %s;\n', hideChs)];
 
@@ -1240,6 +1301,12 @@ montageFile = [montageFile,sprintf('handles.scale = flipud(%s);\n', scaleChs)];
 
 montageFile = [montageFile,sprintf('%% channels to add scale lines to\n')];
 montageFile = [montageFile,sprintf('handles.scaleChans = %s;\n', ampChs)];
+
+montageFile = [montageFile,sprintf('%% channels to plot as second-to-second numeric data (e.g., SpO2) data\n')];
+montageFile = [montageFile,sprintf('handles.o2satChs = %s;\n', o2satChs)];
+
+montageFile = [montageFile,sprintf('%% channels to plot negative up\n')];
+montageFile = [montageFile,sprintf('handles.negChans = %s;\n', negChs)];
 
 montageFile = [montageFile,sprintf('%% voltage to place scales\n')];
 
@@ -1702,3 +1769,473 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % Hint: delete(hObject) closes the figure
 uiresume(handles.figure1);
 %delete(hObject);
+
+
+% --- Executes on button press in o2sat1.
+function o2sat1_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat1
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp1,'Enable', 'on');
+        set(handles.hide1,'Enable', 'on');
+        set(handles.color1,'Enable', 'on');
+        set(handles.setGrid1,'Enable', 'on');
+        set(handles.scale1,'Enable', 'on');
+        set(handles.neg1,'Enable','on');
+    case 1
+        set(handles.amp1,'Enable', 'off');
+        set(handles.hide1,'Enable', 'off');
+        set(handles.color1,'Enable', 'off');
+        set(handles.setGrid1,'Enable', 'off');
+        set(handles.scale1,'Enable', 'off');
+        set(handles.neg1,'Enable','off');
+end
+
+% --- Executes on button press in o2sat2.
+function o2sat2_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat2
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp2,'Enable', 'on');
+        set(handles.hide2,'Enable', 'on');
+        set(handles.color2,'Enable', 'on');
+        set(handles.setGrid2,'Enable', 'on');
+        set(handles.scale2,'Enable', 'on');
+        set(handles.neg2,'Enable','on');
+    case 1
+        set(handles.amp2,'Enable', 'off');
+        set(handles.hide2,'Enable', 'off');
+        set(handles.color2,'Enable', 'off');
+        set(handles.setGrid2,'Enable', 'off');
+        set(handles.scale2,'Enable', 'off');
+        set(handles.neg2,'Enable','off');
+end
+
+% --- Executes on button press in o2sat3.
+function o2sat3_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat3
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp3,'Enable', 'on');
+        set(handles.hide3,'Enable', 'on');
+        set(handles.color3,'Enable', 'on');
+        set(handles.setGrid3,'Enable', 'on');
+        set(handles.scale3,'Enable', 'on');
+        set(handles.neg3,'Enable','on');
+    case 1
+        set(handles.amp3,'Enable', 'off');
+        set(handles.hide3,'Enable', 'off');
+        set(handles.color3,'Enable', 'off');
+        set(handles.setGrid3,'Enable', 'off');
+        set(handles.scale3,'Enable', 'off');
+        set(handles.neg3,'Enable','off');
+end
+
+% --- Executes on button press in o2sat4.
+function o2sat4_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat4
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp4,'Enable', 'on');
+        set(handles.hide4,'Enable', 'on');
+        set(handles.color4,'Enable', 'on');
+        set(handles.setGrid4,'Enable', 'on');
+        set(handles.scale4,'Enable', 'on');
+        set(handles.neg4,'Enable','on');
+    case 1
+        set(handles.amp4,'Enable', 'off');
+        set(handles.hide4,'Enable', 'off');
+        set(handles.color4,'Enable', 'off');
+        set(handles.setGrid4,'Enable', 'off');
+        set(handles.scale4,'Enable', 'off');
+        set(handles.neg4,'Enable','off');
+end
+
+% --- Executes on button press in o2sat5.
+function o2sat5_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat5
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp5,'Enable', 'on');
+        set(handles.hide5,'Enable', 'on');
+        set(handles.color5,'Enable', 'on');
+        set(handles.setGrid5,'Enable', 'on');
+        set(handles.scale5,'Enable', 'on');
+        set(handles.neg5,'Enable','on');
+    case 1
+        set(handles.amp5,'Enable', 'off');
+        set(handles.hide5,'Enable', 'off');
+        set(handles.color5,'Enable', 'off');
+        set(handles.setGrid5,'Enable', 'off');
+        set(handles.scale5,'Enable', 'off');
+        set(handles.neg5,'Enable','off');
+end
+
+% --- Executes on button press in o2sat6.
+function o2sat6_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat6
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp6,'Enable', 'on');
+        set(handles.hide6,'Enable', 'on');
+        set(handles.color6,'Enable', 'on');
+        set(handles.setGrid6,'Enable', 'on');
+        set(handles.scale6,'Enable', 'on');
+        set(handles.neg6,'Enable','on');
+    case 1
+        set(handles.amp6,'Enable', 'off');
+        set(handles.hide6,'Enable', 'off');
+        set(handles.color6,'Enable', 'off');
+        set(handles.setGrid6,'Enable', 'off');
+        set(handles.scale6,'Enable', 'off');
+        set(handles.neg6,'Enable','off');
+end
+
+% --- Executes on button press in o2sat7.
+function o2sat7_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat7
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp7,'Enable', 'on');
+        set(handles.hide7,'Enable', 'on');
+        set(handles.color7,'Enable', 'on');
+        set(handles.setGrid7,'Enable', 'on');
+        set(handles.scale7,'Enable', 'on');
+        set(handles.neg7,'Enable','on');
+    case 1
+        set(handles.amp7,'Enable', 'off');
+        set(handles.hide7,'Enable', 'off');
+        set(handles.color7,'Enable', 'off');
+        set(handles.setGrid7,'Enable', 'off');
+        set(handles.scale7,'Enable', 'off');
+        set(handles.neg7,'Enable','off');
+end
+
+% --- Executes on button press in o2sat8.
+function o2sat8_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat8
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp8,'Enable', 'on');
+        set(handles.hide8,'Enable', 'on');
+        set(handles.color8,'Enable', 'on');
+        set(handles.setGrid8,'Enable', 'on');
+        set(handles.scale8,'Enable', 'on');
+        set(handles.neg8,'Enable','on');
+    case 1
+        set(handles.amp8,'Enable', 'off');
+        set(handles.hide8,'Enable', 'off');
+        set(handles.color8,'Enable', 'off');
+        set(handles.setGrid8,'Enable', 'off');
+        set(handles.scale8,'Enable', 'off');
+        set(handles.neg8,'Enable','off');
+end
+
+% --- Executes on button press in o2sat9.
+function o2sat9_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat9
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp9,'Enable', 'on');
+        set(handles.hide9,'Enable', 'on');
+        set(handles.color9,'Enable', 'on');
+        set(handles.setGrid9,'Enable', 'on');
+        set(handles.scale9,'Enable', 'on');
+        set(handles.neg9,'Enable','on');
+    case 1
+        set(handles.amp9,'Enable', 'off');
+        set(handles.hide9,'Enable', 'off');
+        set(handles.color9,'Enable', 'off');
+        set(handles.setGrid9,'Enable', 'off');
+        set(handles.scale9,'Enable', 'off');
+        set(handles.neg9,'Enable','off');
+end
+
+
+% --- Executes on button press in o2sat10.
+function o2sat10_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat10
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp10,'Enable', 'on');
+        set(handles.hide10,'Enable', 'on');
+        set(handles.color10,'Enable', 'on');
+        set(handles.setGrid10,'Enable', 'on');
+        set(handles.scale10,'Enable', 'on');
+        set(handles.neg10,'Enable','on');
+    case 1
+        set(handles.amp10,'Enable', 'off');
+        set(handles.hide10,'Enable', 'off');
+        set(handles.color10,'Enable', 'off');
+        set(handles.setGrid10,'Enable', 'off');
+        set(handles.scale10,'Enable', 'off');
+        set(handles.neg10,'Enable','off');
+end
+
+
+% --- Executes on button press in o2sat11.
+function o2sat11_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Hint: get(hObject,'Value') returns toggle state of o2sat11
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp11,'Enable', 'on');
+        set(handles.hide11,'Enable', 'on');
+        set(handles.color11,'Enable', 'on');
+        set(handles.setGrid11,'Enable', 'on');
+        set(handles.scale11,'Enable', 'on');
+        set(handles.neg11,'Enable','on');
+    case 1
+        set(handles.amp11,'Enable', 'off');
+        set(handles.hide11,'Enable', 'off');
+        set(handles.color11,'Enable', 'off');
+        set(handles.setGrid11,'Enable', 'off');
+        set(handles.scale11,'Enable', 'off');
+        set(handles.neg11,'Enable','off');
+end
+
+        
+    
+
+
+% --- Executes on button press in o2sat12.
+function o2sat12_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat12
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp12,'Enable', 'on');
+        set(handles.hide12,'Enable', 'on');
+        set(handles.color12,'Enable', 'on');
+        set(handles.setGrid12,'Enable', 'on');
+        set(handles.scale12,'Enable', 'on');
+        set(handles.neg12,'Enable','on');
+    case 1
+        set(handles.amp12,'Enable', 'off');
+        set(handles.hide12,'Enable', 'off');
+        set(handles.color12,'Enable', 'off');
+        set(handles.setGrid12,'Enable', 'off');
+        set(handles.scale12,'Enable', 'off');
+        set(handles.neg12,'Enable','off');
+end
+
+
+% --- Executes on button press in o2sat13.
+function o2sat13_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat13
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp13,'Enable', 'on');
+        set(handles.hide13,'Enable', 'on');
+        set(handles.color13,'Enable', 'on');
+        set(handles.setGrid13,'Enable', 'on');
+        set(handles.scale13,'Enable', 'on');
+        set(handles.neg13,'Enable','on');
+    case 1
+        set(handles.amp13,'Enable', 'off');
+        set(handles.hide13,'Enable', 'off');
+        set(handles.color13,'Enable', 'off');
+        set(handles.setGrid13,'Enable', 'off');
+        set(handles.scale13,'Enable', 'off');
+        set(handles.neg13,'Enable','off');
+end
+
+
+% --- Executes on button press in o2sat14.
+function o2sat14_Callback(hObject, eventdata, handles)
+% hObject    handle to o2sat14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of o2sat14
+switch get(hObject,'Value')
+    case 0
+        set(handles.amp14,'Enable', 'on');
+        set(handles.hide14,'Enable', 'on');
+        set(handles.color14,'Enable', 'on');
+        set(handles.setGrid14,'Enable', 'on');
+        set(handles.scale14,'Enable', 'on');
+        set(handles.neg14,'Enable','on');
+    case 1
+        set(handles.amp14,'Enable', 'off');
+        set(handles.hide14,'Enable', 'off');
+        set(handles.color14,'Enable', 'off');
+        set(handles.setGrid14,'Enable', 'off');
+        set(handles.scale14,'Enable', 'off');
+        set(handles.neg14,'Enable','off');
+end
+
+
+% --- Executes on button press in neg1.
+function neg1_Callback(hObject, eventdata, handles)
+% hObject    handle to neg1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg1
+
+
+% --- Executes on button press in neg2.
+function neg2_Callback(hObject, eventdata, handles)
+% hObject    handle to neg2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg2
+
+
+% --- Executes on button press in neg3.
+function neg3_Callback(hObject, eventdata, handles)
+% hObject    handle to neg3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg3
+
+
+% --- Executes on button press in neg4.
+function neg4_Callback(hObject, eventdata, handles)
+% hObject    handle to neg4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg4
+
+
+% --- Executes on button press in neg5.
+function neg5_Callback(hObject, eventdata, handles)
+% hObject    handle to neg5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg5
+
+
+% --- Executes on button press in neg6.
+function neg6_Callback(hObject, eventdata, handles)
+% hObject    handle to neg6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg6
+
+
+% --- Executes on button press in neg7.
+function neg7_Callback(hObject, eventdata, handles)
+% hObject    handle to neg7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg7
+
+
+% --- Executes on button press in neg8.
+function neg8_Callback(hObject, eventdata, handles)
+% hObject    handle to neg8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg8
+
+
+% --- Executes on button press in neg9.
+function neg9_Callback(hObject, eventdata, handles)
+% hObject    handle to neg9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg9
+
+
+% --- Executes on button press in neg10.
+function neg10_Callback(hObject, eventdata, handles)
+% hObject    handle to neg10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg10
+
+
+% --- Executes on button press in neg11.
+function neg11_Callback(hObject, eventdata, handles)
+% hObject    handle to neg11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg11
+
+
+% --- Executes on button press in neg12.
+function neg12_Callback(hObject, eventdata, handles)
+% hObject    handle to neg12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg12
+
+
+% --- Executes on button press in neg13.
+function neg13_Callback(hObject, eventdata, handles)
+% hObject    handle to neg13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg13
+
+
+% --- Executes on button press in neg14.
+function neg14_Callback(hObject, eventdata, handles)
+% hObject    handle to neg14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of neg14

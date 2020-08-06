@@ -64,6 +64,7 @@ addpath(genpath([fpath,'/montages']));
 fprintf(1,'Loading: Functions\n');
 addpath(genpath([fpath,'/coreFunctions']));
 javaaddpath(([fpath,'/outsideToolboxes/dbDrivers/jtds-1/jtds-1.3.1.jar']));
+javaaddpath(([fpath,'/outsideToolboxes/dbDrivers/sqlite-jdbc-3.30.1.jar']));
 javaaddpath(([fpath,'/outsideToolboxes/dbDrivers/sqljdbc_8.2/mssql-jdbc-8.2.0.jre8.jar']));
 fprintf(1,'Loading: User Interface\n');
 addpath(genpath([fpath,'/gui']));
@@ -72,7 +73,7 @@ addpath(genpath([fpath,'/gui']));
 if exist('eeglab.m','file')~=2
     fprintf(1,'\n!!! No EEGLAB detected, using included verison (13.4.4b) !!!\n');
     addpath(([fpath,'/outsideToolboxes/eeglab13_4_4b']));
-    fprintf(1,'Loading: EEGLAB\n');
+    fprintf(1,'Loading: EEGLAB\n');  
     eeglab;
 else
     fprintf(1,'Loading: EEGLAB\n');

@@ -1,7 +1,7 @@
 function handles = sleep_Montage(handles)
 %%    Auto-generated Húmë Scoring Montage
-%  Montage Generated from File: b0dc3892-c312-4ac2-a420-7f6c5685078f.edf
-%  Montage Generated on Date: 25-Nov-2019
+%  Montage Generated from File: 2a6c0b32-dba0-44f8-b4a7-75674d52640d (1).edf
+%  Montage Generated on Date: 21-Jul-2020
 
 %%    Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
@@ -27,15 +27,18 @@ function handles = sleep_Montage(handles)
 % channels to hide
 handles.hideChans = {};
 %electrode names that should be ploted.
-handles.electrodes = flipud({'CH1 FP1-M1';'CH2 FP2-M2';'CH3 FP2-FP1';'CH4 FP1-FPZ';});
+handles.electrodes = flipud({'CH1 F7-O1';'CH2 F8-O2';'CH3 Fp1-F8';'CH4 F8-F7';'CH5 Fp1-O1';'CH6 Fp1-O2';'CH7 FP1-F7';});
 %colors for each electrode. The order and length must match the electrode list
-handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];});
+handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];});
 %scale for each electrode. The order and length must match the electrode list
-handles.scale = flipud({'150';'150';'150';'150';});
+handles.scale = flipud({'150';'150';'150';'150';'150';'150';'150';});
 % channels to add scale lines to
-handles.scaleChans = {'CH1 FP1-M1' 'CH2 FP2-M2' };
+handles.scaleChans = {'CH1 F7-O1' };
+handles.o2satChs = {};
+% channels
+handles.negChans = {'CH1 F7-O1';'CH2 F8-O2';'CH3 Fp1-F8';'CH4 F8-F7';'CH5 Fp1-O1';'CH6 Fp1-O2';'CH7 FP1-F7';};  
 % voltage to place scales
-handles.bigGridMat{1,1} = 'CH1 FP1-M1';
+handles.bigGridMat{1,1} = 'CH1 F7-O1';
 handles.bigGridMat{1,2}{1,1} = '-75';
 handles.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
 handles.bigGridMat{1,2}{2,1} = '-37.5';
@@ -46,14 +49,3 @@ handles.bigGridMat{1,2}{4,1} = '37.5';
 handles.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
 handles.bigGridMat{1,2}{5,1} = '75';
 handles.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,1} = 'CH2 FP2-M2';
-handles.bigGridMat{2,2}{1,1} = '-75';
-handles.bigGridMat{2,2}{1,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{2,1} = '-37.5';
-handles.bigGridMat{2,2}{2,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{3,1} = '0';
-handles.bigGridMat{2,2}{3,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{4,1} = '37.5';
-handles.bigGridMat{2,2}{4,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{5,1} = '75';
-handles.bigGridMat{2,2}{5,2} = [0 5.000000e-01 0];

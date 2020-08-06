@@ -28,6 +28,10 @@ function handles = sleep_Montage(handles)
 handles.hideChans = {};
 %electrode names that should be ploted.
 handles.electrodes = flipud({'FZ';'CZ';'PZ';});
+% channels to plot negative up
+handles.negChans = {'FZ';'CZ';'PZ';};
+% channels to plot as second-to-second numeric data (e.g., SpO2) data
+handles.o2satChs = {};
 %colors for each electrode. The order and length must match the electrode list
 handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];});
 %scale for each electrode. The order and length must match the electrode list

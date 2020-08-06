@@ -102,13 +102,13 @@ switch handles.dbAuth.Value
        handles.conn = database(handles.dbName.String,handles.dbUsername.String,handles.dbPassword.String, ...
                 'Vendor','Microsoft SQL Server','Server',handles.dbAddress.String, ...
                 'AuthType','Server','portnumber',1433);
-            
+           
     case 4 
        handles.conn = database(handles.dbName.String,'jared','',...
                 'Vendor','PostgreSQL',...
                 'Server','localhost');
     case 5
-        msgbox('Integarted Húmë is not yet implemented');
+        msgbox('Integarted Húmë is not yet implemented');j
 end
 
 if ~isfield(handles,'conn')

@@ -467,16 +467,36 @@ report = [report, '</table>'];
 
 %% Events
 
-if(isfield(stageData, 'MarkedEvents') && ~isfield(stageData, 'EventMat'))
+
+
     stageData = smgEventConvert(stageData);
     
-end
+
+
+
 
 if(isfield(stageData, 'eventMat'))
     
-    report = [report, '<br><hr><h2>Event Counts:</h2>'];
+    report = [report, '<br><hr><h2>Event Marking:</h2><h3>Raw Counts:</h3>'];
     
     LUT = eventLUT;
+    
+    if isfield(stageData, 'rectEvents')
+        ~isempty(stageData.rectEvents)
+        uniqueTypes = unique(stageData.rectEvents(:,5));
+        
+        for i = 1:size(uniqueTypes,1)
+            
+            if ~ismember(uniqueTypes{i}, LUT(:,2))
+                LUT(end+1, :) = {'' uniqueTypes{i,:}};
+            end
+            
+        end
+        
+        
+    end
+
+
     eventSums = nansum(stageData.eventMat,1);
     eventToPlot = find(eventSums>0);
     
@@ -484,12 +504,35 @@ if(isfield(stageData, 'eventMat'))
                                 '<tr><th></th><th align="center" colspan="5">Within SPT</th><th></th><th align="center" colspan="2">Outside SPT</th></tr>\n', ...
                                '<tr><td></td><td><b>Wake</b></td><td><b>MT</b></td><td><b>NREM</b></td><td><b>REM</b></td><td><b>TST</b></td><td></td><td><b>Sleep</b></td><td><b>Wake</b></td></tr>\n'])];
 
+    % combine Apnea-Hypopnea if either is present
+    if or(ismember( 'Apnea', LUT(eventToPlot,2)), ismember( 'Hypopnea', LUT(eventToPlot,2)))
+        
+        LUT = [LUT; {'' 'Apnea-Hypopnea'}];
+        eventToPlot = [eventToPlot size(LUT,1)];
+        
+        if and(ismember('Apnea', LUT(eventToPlot,2)), ~ismember('Hypopnea', LUT(eventToPlot,2)))
+            eventToPlot = [eventToPlot find(strcmp(LUT(:,2), 'Hypopnea'))];
+        elseif and(~ismember('Apnea', LUT(eventToPlot,2)), ismember('Hypopnea', LUT(eventToPlot,2)))
+            eventToPlot = [eventToPlot find(strcmp(LUT(:,2), 'Apnea'))];
+        end
+        eventToPlot = sort(eventToPlot);
+    end
+       
+            
+    
+        
+    
     for i = 1:length(eventToPlot)
         
         % Set up Table of events by Wake, MT, NREM Sleep, REM Sleep, All
         % Sleep
             
+        if ~strcmp(LUT{eventToPlot(i), 2}, 'Apnea-Hypopnea')
             ev = stageData.eventMat(:,eventToPlot(i));
+        else
+            ev = nansum(stageData.eventMat(:,or(strcmp(LUT(:,2), 'Apnea'), strcmp(LUT(:,2), 'Hypopnea'))), 2);
+        end
+        
             
             % TRIM TO TDT
             ev = ev(min(find(stageData.stages ~= 7)):max(find(stageData.stages ~=7) ));
@@ -515,31 +558,68 @@ if(isfield(stageData, 'eventMat'))
                     evSleepEx2 = NaN;
                     evWEx2 = NaN;
                 end
-            evSleepEx = nansum([evSleepEx1;evSleepEx2]);
-            evWakeEx = nansum([evWEx1;evWEx2]);
-
-            
+                evSleepEx = nansum([evSleepEx1;evSleepEx2]);
+                evWakeEx = nansum([evWEx1;evWEx2]);
                 
-            % SPT
-            evSPT = ev(sleepLat:sleepEnd);
-            stagesSPT = stages(sleepLat:sleepEnd);
-            evR = nansum(evSPT((stagesSPT==5)));
-            evN = nansum(evSPT((and(stagesSPT>=1 , stagesSPT<=4))));
-            evW = nansum(evSPT((stagesSPT==0))); 
-            evTST = evR+evN;
-            evMT = nansum(evSPT((stagesSPT==6)));
-            
-            eventRow = [evW evMT evN evR evTST evSleepEx evWakeEx];
-            
-            report = [report, sprintf('<tr><td><b>%s</b></td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td></td><td>%d</td><td>%d</td></tr>\n', [LUT{eventToPlot(i),2},':'], eventRow)];
-            stageStats.eventData.events{i,1} = LUT{eventToPlot(i),2};
-            stageStats.eventData.events{i,2} = eventRow;           
-            stageStats.eventData.eventTotals = eventSums;
-            stageStats.eventData.LUT = LUT;
+                
+                
+                % SPT
+                evSPT = ev(sleepLat:sleepEnd);
+                stagesSPT = stages(sleepLat:sleepEnd);
+                evR = nansum(evSPT((stagesSPT==5)));
+                evN = nansum(evSPT((and(stagesSPT>=1 , stagesSPT<=4))));
+                evW = nansum(evSPT((stagesSPT==0)));
+                evTST = evR+evN;
+                evMT = nansum(evSPT((stagesSPT==6)));
+                
+                eventRow = [evW evMT evN evR evTST evSleepEx evWakeEx];
+                
+                report = [report, sprintf('<tr><td><b>%s</b></td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td></td><td>%d</td><td>%d</td></tr>\n', [LUT{eventToPlot(i),2},':'], eventRow)];
+                stageStats.eventData.events{i,1} = LUT{eventToPlot(i),2};
+                stageStats.eventData.events{i,2} = eventRow;
+                stageStats.eventData.eventTotals = eventSums;
+                stageStats.eventData.LUT = LUT;
+                
     end
     report = [report, '</tr></table>'];
-
+    
+    % Per minute index
+    report = [report, '<h3>Density/Index (per minute):</h3>'];
+    denom = [sum(stages(sleepLat:sleepEnd)==0)/(60/stageData.win) sum(stages(sleepLat:sleepEnd)==6)/(60/stageData.win) sum(and(stages(sleepLat:sleepEnd)>0, stages(sleepLat:sleepEnd)<5))/(60/stageData.win) sum(stages(sleepLat:sleepEnd)==5)/(60/stageData.win) sum(and(stages(sleepLat:sleepEnd)>0, stages(sleepLat:sleepEnd)<6))/(60/stageData.win) sum(and(stages([1:sleepLat-1 sleepEnd+1:end])>0, stages([1:sleepLat-1 sleepEnd+1:end])<6))/(60/stageData.win) sum(stages([1:sleepLat-1 sleepEnd+1:end])==0)/(60/stageData.win)];
+    
+    
+    report = [report, sprintf(['<table cellpadding="5">\n', ...
+        '<tr><th></th><th align="center" colspan="5">Within SPT</th><th></th><th align="center" colspan="2">Outside SPT</th></tr>\n', ...
+        '<tr><td></td><td><b>Wake</b></td><td><b>MT</b></td><td><b>NREM</b></td><td><b>REM</b></td><td><b>TST</b></td><td></td><td><b>Sleep</b></td><td><b>Wake</b></td></tr>\n'])];
+    
+    for i = 1:length(eventToPlot)
+        
+        report = [report, sprintf('<tr><td><b>%s</b></td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td></td><td>%.2f</td><td>%.2f</td></tr>\n', [LUT{eventToPlot(i),2},':'], stageStats.eventData.events{i,2}./denom)];
+        stageStats.eventData.indexMin{i,1} = LUT{eventToPlot(i),2};
+        stageStats.eventData.indexMin{i,2} = stageStats.eventData.events{i,2}./denom;
+        
+    end
+    report = [report, '</tr></table>'];
+    
+    % Per Hour Index
+    denom = [sum(stages(sleepLat:sleepEnd)==0)/((60*60)/stageData.win) sum(stages(sleepLat:sleepEnd)==6)/((60*60)/stageData.win) sum(and(stages(sleepLat:sleepEnd)>0, stages(sleepLat:sleepEnd)<5))/((60*60)/stageData.win) sum(stages(sleepLat:sleepEnd)==5)/((60*60)/stageData.win) sum(and(stages(sleepLat:sleepEnd)>0, stages(sleepLat:sleepEnd)<6))/((60*60)/stageData.win) sum(and(stages([1:sleepLat-1 sleepEnd+1:end])>0, stages([1:sleepLat-1 sleepEnd+1:end])<6))/((60*60)/stageData.win) sum(stages([1:sleepLat-1 sleepEnd+1:end])==0)/((60*60)/stageData.win)];
+   
+    report = [report, '<h3>Density/Index (per hour):</h3>'];
+    report = [report, sprintf(['<table cellpadding="5">\n', ...
+        '<tr><th></th><th align="center" colspan="5">Within SPT</th><th></th><th align="center" colspan="2">Outside SPT</th></tr>\n', ...
+        '<tr><td></td><td><b>Wake</b></td><td><b>MT</b></td><td><b>NREM</b></td><td><b>REM</b></td><td><b>TST</b></td><td></td><td><b>Sleep</b></td><td><b>Wake</b></td></tr>\n'])];
+    
+    for i = 1:length(eventToPlot)
+        
+        report = [report, sprintf('<tr><td><b>%s</b></td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td></td><td>%.2f</td><td>%.2f</td></tr>\n', [LUT{eventToPlot(i),2},':'], stageStats.eventData.events{i,2}./denom)];
+        stageStats.eventData.indexHr{i,1} = LUT{eventToPlot(i),2};
+        stageStats.eventData.indexHr{i,2} = stageStats.eventData.events{i,2}./denom;
+        
+    end
+    report = [report, '</tr></table>'];
+    
 end
+
 
 %% Sleep splits - Quarters and thirds
 report = [report, '<br><hr><h2>Interval Analysis:</h2>'];
@@ -712,7 +792,7 @@ save([outname, '_stats.mat'], 'stageStats')
 
 if isfield(stageData,'eventMat')
     
-    plotHypnogramEVENTS(stageData, stageStats.cycleBounds, 1); % SW SEPARATED - TYPE 1 - JMS 7/30/14
+    plotHypnogramEVENTS(stageData, stageStats.cycleBounds, 1, LUT); % SW SEPARATED - TYPE 1 - JMS 7/30/14
 else
     plotHypnogram(stageData, stageStats.cycleBounds, 1); % SW SEPARATED - TYPE 1 - JMS 7/30/14
 end
@@ -730,9 +810,9 @@ report = [report, '<h3>Full Transition Table:</h3>', transTableAllStr];
 % stageDataSW.stages(stageDataSW.stages == 4) = 3;
 if isfield(stageData,'eventMat')
     
-    plotHypnogramEVENTS(stageData, stageStats.cycleBounds, 2); % SW SEPARATED - TYPE 1 - JMS 7/30/14
+    plotHypnogramEVENTS(stageData, stageStats.cycleBounds, 2, LUT); % SW COLLAPSED - TYPE 2 - JMS 7/30/14
 else
-    plotHypnogram(stageData, stageStats.cycleBounds, 2); % SW SEPARATED - TYPE 1 - JMS 7/30/14
+    plotHypnogram(stageData, stageStats.cycleBounds, 2); % SW COLLAPSED - TYPE 2 - JMS 7/30/14
 end
 set(gcf, 'PaperPositionMode', 'auto');
 saveas(gcf, [outname, '_hyp2.png'], 'png');

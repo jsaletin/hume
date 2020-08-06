@@ -93,6 +93,13 @@ for i = 1:length(montageNames)
 end
 set(handles.plotSleepIN, 'String', montages)
 
+% Set Events
+LUT = eventLUT;
+set(handles.EventType, 'String', LUT(:,2));
+
+% Set show events
+set(handles.showEvents,'State', 'on');
+
 eval(['handles.CurrMontage = ',montages{1}, ';']);
 
 % Set Notes list based on notes directory
@@ -109,8 +116,15 @@ set(handles.twinNotes, 'String', notes)
 handles.output = hObject;
 fprintf(1,'\n\nWelcome to Húmë! Happy Scoring!\n\n');
 
+% Set events to on
+set(handles.showEvents, 'State', 'on');
+handles.plotEvents = 1;
 % Update handles structure
 guidata(hObject, handles);
+
+
+
+
 
 % UIWAIT makes sleepScoring wait for user response (see UIRESUME)
 % uiwait(handles.humeWindow);
@@ -145,11 +159,21 @@ if isfield(handles,'stageData')
         arrowRightB_Callback(handles.arrowRightB, [], handles);
     elseif(c == 7)
         arrowLeftB_Callback(handles.arrowLeftB, [], handles);
-    elseif(c == 9)
+    elseif(c == 9) 
         arrowRightB_Callback(handles.arrowRightB, [], handles);
     elseif(strcmp(cStr, 'x'))
         Artifact_Callback(handles.Artifact, [], handles);
+    elseif(strcmp(eventdata.Key, 'leftarrow'))
+        arrowLeftB_Callback(handles.arrowLeftB, [], handles);
+    elseif(strcmp(eventdata.Key, 'rightarrow'))
+        arrowRightB_Callback(handles.arrowRightB, [], handles);
+    elseif(strcmp(cStr, 'e'))
+        eventMark(hObject, [], handles);
+    elseif(strcmp(cStr, 'E'))
+        eventRemove(hObject, [], handles);
     end
+    
+    
 end
 
 % --- Executes on button press in wakeB.
@@ -229,7 +253,7 @@ function jumpto(handles, ptX)
 winSize = str2num(get(handles.winIN, 'String'));
 srate = handles.EEG.srate;
 
-newX = [ptX+1, ptX + winSize*srate];
+newX = [ptX+1, ptX+winSize*srate];
 range = newX(1):newX(2);
 handles = plotSleepData(handles, range);
 updateStage(handles, []);
@@ -407,7 +431,7 @@ handles = plotSleepData(handles, range);
 
 function handles = initStaging(handles)
 winSize = str2num(get(handles.winIN, 'String'));
-srate = handles.stageData.srate;
+srate = handles.EEG.srate;
 
 %set stage info to user input
 handles.stageData.win = str2num(get(handles.winIN, 'String'));
@@ -1047,15 +1071,15 @@ function mark_t_ClickedCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % --- Executes on button press in markB.
-if(strcmp(get(handles.markStr, 'Enable'), 'on'))
-    set(handles.markStr, 'Enable', 'off')
-    set(handles.setMark, 'Enable', 'off')
-    set(handles.delMark, 'Enable', 'off')
+if(strcmp(get(handles.slopeB, 'Enable'), 'on'))
+%   set(handles.markStr, 'Enable', 'off')
+%    set(handles.setMark, 'Enable', 'off')
+%    set(handles.delMark, 'Enable', 'off')
     set(handles.slopeB, 'Enable', 'off')
 else
-    set(handles.markStr, 'Enable', 'on')
-    set(handles.setMark, 'Enable', 'on')
-    set(handles.delMark, 'Enable', 'on')
+ %   set(handles.markStr, 'Enable', 'on')
+ %   set(handles.setMark, 'Enable', 'on')
+ %  set(handles.delMark, 'Enable', 'on')
     set(handles.slopeB, 'Enable', 'on')
 end
 
@@ -1075,6 +1099,7 @@ function plotSleepIN_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from plotSleepIN
 curX = xlim(handles.axes1);
 range = curX(1):curX(2);
+
 
 plotFCN = get(handles.plotSleepIN, 'String');
 boxInd = get(handles.plotSleepIN, 'Value');
@@ -1173,7 +1198,8 @@ if isfield(handles,'EEG')
     handles.CurrMontage.hideChans = mont.hideChans;
     handles.CurrMontage.scaleChans = mont.scaleChans;
     handles.CurrMontage.scale = mont.scale;
-    
+    handles.CurrMontage.o2satChs = mont.o2satChs;
+    handles.CurrMontage.negChans = mont.negChans;
     sleepPath = which('hume');
     montageNames = dir(fullfile(fileparts(sleepPath), 'montages'));
     montages = [];
@@ -1234,6 +1260,7 @@ function runStats_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to runStats (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp 'hi';
 sleepStats_woInput(handles.stageData, get(handles.stageFileIN, {'String'}),handles.EEG);
 
 
@@ -1279,13 +1306,20 @@ function upload_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if ~isempty(getappdata(0,'Conn'))
     if isopen(getappdata(0,'Conn'))
-        sleepDBUpload;
+        
+        c = getappdata(0,'Conn');
+        if strcmp(c.Driver, 'org.sqlite.JDBC')
+            sleepDBUpload_sqlite;
+        else
+            sleepDBUpload;
+        end
     else
         signOut_Callback([],[],handles);
     end
 else
     signOut_Callback([],[],handles);
 end
+
 
 % --------------------------------------------------------------------
 function Untitled_3_Callback(hObject, eventdata, handles)
@@ -1331,6 +1365,7 @@ if ~isempty(getappdata(0,'Conn'))
         
         % Hide Login
         set(handles.sqlLogin,'Enable','off');
+        set(handles.sqliteLogin,'Enable','off');
     end
 end
 % --------------------------------------------------------------------
@@ -1340,29 +1375,34 @@ function signOut_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if ~isempty(getappdata(0,'Conn'))
     if isopen(getappdata(0,'Conn'))
-        close(getappdata(0,'Conn'));
-        setappdata(0,'Conn',[]);
-        set(handles.signOut,'Enable','off');
-        set(handles.upload,'Enable','off');
-        set(handles.genTable,'Enable','off');
-        set(handles.sqlLogin,'Enable','on');
-        msgbox('Server Disconnected!');
+        open = 1;
     else
-        setappdata(0,'Conn',[]);
-        set(handles.signOut,'Enable','off');
-        set(handles.upload,'Enable','off');
-        set(handles.genTable,'Enable','off');
-        set(handles.sqlLogin,'Enable','on');
-        % msgbox('Server Already Closed!');
+        open = 0;
     end
+else
+    open = 0;
+end
+
+if open ==1
+    
+    close(getappdata(0,'Conn'));
+    setappdata(0,'Conn',[]);
+    set(handles.signOut,'Enable','off');
+    set(handles.upload,'Enable','off');
+    set(handles.genTable,'Enable','off');
+    set(handles.sqlLogin,'Enable','on');
+    set(handles.sqliteLogin,'Enable','on');
+    msgbox('Server Disconnected!');
+    
 else
     set(handles.signOut,'Enable','off');
     set(handles.upload,'Enable','off');
     set(handles.genTable,'Enable','off');
     set(handles.sqlLogin,'Enable','on');
+    set(handles.sqliteLogin,'Enable','on');
     msgbox('Server Already Closed!');
 end
-    
+
 
 
 % --------------------------------------------------------------------
@@ -1370,8 +1410,12 @@ function genTable_Callback(hObject, eventdata, handles)
 % hObject    handle to genTable (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-sleepStatsDBReport(getappdata(0,'Conn'), handles);
-
+c = getappdata(0,'Conn');
+if strcmp(c.Driver, 'org.sqlite.JDBC')
+    sleepStatsDBReport_sqlite(getappdata(0,'Conn'), handles);
+else
+    sleepStatsDBReport(getappdata(0,'Conn'), handles);
+end
 
 % --- Executes when user attempts to close humeWindow.
 function humeWindow_CloseRequestFcn(hObject, eventdata, handles)
@@ -1436,3 +1480,207 @@ function eventCodes_m_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 msg = 'hi';
 msgbox(msg, 'Hot Keys');
+
+function eventMark(hObject, eventData, handles)
+
+    [x y] = ginput(2);
+    y = round(y(1)/150);
+    
+    % check and see if draggable events exist
+    if isfield(handles.stageData,'rectEvents')
+     
+    
+    
+
+    % check if an event ends on the last page right before (within 1
+    % seconds)
+    %rectangle('Position', [x(1) y(1)*150-75 x(2)-x(1) 150],'FaceColor', [1 .5 .3, .2]);
+    timesToCheck = [x(1) - 1*handles.EEG.srate x(1)];
+    evInRange=find( ...
+               and(...
+                    and(...
+                        and([handles.stageData.rectEvents{:,3}] > timesToCheck(1), [handles.stageData.rectEvents{:,3}] < timesToCheck(2)),...
+                        strcmp(handles.stageData.rectEvents(:,5)',handles.EventType.String{handles.EventType.Value})...
+                    ),...
+                   strcmp(handles.CurrMontage.electrodes(y(1)), handles.stageData.rectEvents(:,1)))  ...
+                );    
+            
+    else
+        evInRange = [];
+    end
+    
+    if ~isempty(evInRange) 
+        % If there are events in range, check to merge them.
+        if length(evInRange)>1
+            % there are more than one events and I don't know what to do
+            % yet
+            return
+        else
+            % Ask to combine events
+            opts.Default = 'No';
+            answer = questdlg({['A ',handles.EventType.String{handles.EventType.Value},' ends within 1s of this event.'],['Do you want to combine them?']},...
+                'Combine Events',...
+                'Yes','No',opts.Default);
+            if strcmp(answer,'Yes')
+                % replace start time with event being merged
+                x(1) = handles.stageData.rectEvents{evInRange, 2};
+                % delete event being merged
+                handles.stageData.rectEvents(evInRange, :) = [];
+            end
+        end
+    end
+    
+    if ~isfield(handles.stageData,'rectEvents')
+        handles.stageData.rectEvents = {handles.CurrMontage.electrodes{y(1)} x(1)./handles.EEG.srate x(2)./handles.EEG.srate ceil(x(1)/handles.EEG.srate/handles.stageData.win) handles.EventType.String{handles.EventType.Value} [] 0};
+    elseif isempty(handles.stageData.rectEvents)
+        handles.stageData.rectEvents = {handles.CurrMontage.electrodes{y(1)} x(1)./handles.EEG.srate x(2)./handles.EEG.srate ceil(x(1)/handles.EEG.srate/handles.stageData.win) handles.EventType.String{handles.EventType.Value} [] 0};
+    else
+        handles.stageData.rectEvents(end+1,:) = {handles.CurrMontage.electrodes{y(1)} x(1)./handles.EEG.srate x(2)./handles.EEG.srate ceil(x(1)/handles.EEG.srate/handles.stageData.win) handles.EventType.String{handles.EventType.Value} [] 0};
+    end
+    
+
+curX = xlim(handles.axes1);
+range = curX(1):curX(2);
+handles = plotSleepData(handles, range);
+guidata(hObject, handles);
+
+function eventRemove(hObject, eventdata,handles)
+[x y] = ginput(1);
+y = round(y(1)/150);
+indx = find( ...
+            and(ismember(handles.stageData.rectEvents(:,1), handles.CurrMontage.electrodes{y})' , ...         %channel
+            and([handles.stageData.rectEvents{:,2}].*handles.EEG.srate<x, [handles.stageData.rectEvents{:,3}].*handles.EEG.srate>x)) ...% time
+        ); % time
+% IF A DETECTED EVENT DELETE ALL
+detectedYN = handles.stageData.rectEvents{indx, 6};
+if detectedYN
+ answer = questdlg({'This is an automated event. Do you want to delete all events of this type?'},...
+                ['Confirm ''', handles.stageData.rectEvents{indx,5},''' deletion?'],...
+                'Delete all','Delete selected','Delete none', []);
+            if strcmp(answer,'Delete all')
+                handles.stageData.rectEvents(ismember(handles.stageData.rectEvents(:,5), handles.stageData.rectEvents(indx,5)), :) = []; 
+            elseif strcmp(answer,'Delete selected')
+                handles.stageData.rectEvents(indx,:)=[];
+            end
+else
+    handles.stageData.rectEvents(indx,:)=[];
+end
+
+%handles.stageData.rectEvents(indx,:)=[];
+curX = xlim(handles.axes1);
+range = curX(1):curX(2);
+handles = plotSleepData(handles, range);
+guidata(hObject,handles);
+
+
+% --- Executes on selection change in EventType.
+function EventType_Callback(hObject, eventdata, handles)
+% hObject    handle to EventType (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns EventType contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from EventType
+
+
+% --- Executes during object creation, after setting all properties.
+function EventType_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to EventType (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function oscillationDetection_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to oscillationDetection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[output] = sleepDetectOscillations(handles.EEG.chanlocs);
+
+%eventsout = SWSpiCoupling(handles.stageData, handles.EEG, 'F3', 'Slow Wave (Riedner/Massimini)F3)'edit , 'Sleep Spindle (Ferrarelli/Warby F3)');
+
+% clear old detections
+if isfield(handles.stageData,'rectEvents')
+    if ~isempty(handles.stageData.rectEvents)
+    handles.stageData.rectEvents(and( strcmp(output.type, handles.stageData.rectEvents(:,5)), strcmp(output.ch, handles.stageData.rectEvents(:,1))), :) = [];
+    end
+end
+
+
+eval(['eventsout = ', output.functionCall]);
+
+if ~isfield(handles.stageData,'rectEvents')
+    handles.stageData.rectEvents = eventsout;
+elseif isempty(handles.stageData.rectEvents)
+    handles.stageData.rectEvents = eventsout;
+else
+    handles.stageData.rectEvents = [handles.stageData.rectEvents; eventsout];
+end
+curX = xlim(handles.axes1);
+range = curX(1):curX(2);
+
+handles = plotSleepData(handles, range);
+guidata(hObject,handles);
+
+
+% --------------------------------------------------------------------
+function sqliteLogin_Callback(hObject, eventdata, handles)
+% hObject    handle to sqliteLogin (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+waitfor(sleepDBLocal);
+
+if ~isempty(getappdata(0,'Conn'))
+    if isopen(getappdata(0,'Conn'))
+        
+        % Activate Buttons
+        set(handles.signOut,'Enable','on');
+        set(handles.upload,'Enable','on');
+        set(handles.genTable,'Enable','on');
+        
+        % Hide Login
+        set(handles.sqlLogin,'Enable','off');
+        set(handles.sqliteLogin,'Enable','off');
+    end
+end
+
+
+% --------------------------------------------------------------------
+function showEvents_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to showEvents (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+state = get(handles.showEvents,'State');
+switch state
+    case 'on'
+        handles.plotEvents = 1;
+    case 'off'
+        handles.plotEvents = 0;
+end
+curX = xlim(handles.axes1);
+range = curX(1):curX(2);
+handles = plotSleepData(handles, range);
+guidata(hObject,handles);
+
+
+% --------------------------------------------------------------------
+function detectOscillations_Callback(hObject, eventdata, handles)
+% hObject    handle to detectOscillations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+oscillationDetection_ClickedCallback(hObject, [], handles);
+
+% --------------------------------------------------------------------
+function oscillationReport_Callback(hObject, eventdata, handles)
+% hObject    handle to oscillationReport (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+output = sleepOscillationReport(handles.stageData.rectEvents);
+eval(output);
+

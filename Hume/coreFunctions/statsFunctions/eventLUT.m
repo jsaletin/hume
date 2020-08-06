@@ -33,7 +33,7 @@ LUT = {
     '[6]'   'Sleep Spindle'
     '[7]'   'K Complex'
     '[8]'   'Technologist Intervention'
-    '[9]'   'Respiratory Event'
+    '[9]'   'Respiratory Event' 
     '[A]'   'Apnea'
     '[B]'   'Hypopnea'
     '[C]'   'Obstructive'
@@ -41,8 +41,7 @@ LUT = {
     '[E]'   'Mixed'
     '[F]'   'SaO2 <90%'
     '[G]'   'SaO2 <80%'
-    '[H]'   'PLM w/ Arousal'
-    '[I]'   'PLM w/o Arousal'
+    '[H]'   'PLM'
     };
 
 end

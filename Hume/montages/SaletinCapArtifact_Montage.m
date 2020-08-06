@@ -31,6 +31,10 @@ if ~isempty(handles.EEG.etc.noiseDetection.interpolatedChannelNumbers)
 end
 %electrode names that should be ploted.
 handles.electrodes = flipud({'C3','O2','C4','O1','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','FCz'}');
+% channels to plot negative up
+handles.negChans = {'C3','O2','C4','O1','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','FCz'}';
+% channels to plot as second-to-second numeric data (e.g., SpO2) data
+handles.o2satChs = {};
 %colors for each electrode. The order and length must match the electrode list
 handles.colors = flipud(repmat({[1 0 0]}, 32, 1));
 %scale for each electrode. The order and length must match the electrode list

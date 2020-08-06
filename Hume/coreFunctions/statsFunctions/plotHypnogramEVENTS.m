@@ -1,4 +1,4 @@
-function plotHypnogram(stageData, cycleBounds, type)
+function plotHypnogram(stageData, cycleBounds, type, LUT)
 %%   Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
 %   This file is part of Húmë.
@@ -42,7 +42,7 @@ end
 
 if type == 1
 
-LUT = eventLUT;
+
 eventSums = nansum(stageData.eventMat,1);
 eventToPlot = find(eventSums>0);
 eFields = LUT(eventToPlot,2);
@@ -118,11 +118,11 @@ for e=1:numEvents
     etp=fliplr(eventToPlot);
     eventMat = stageData.eventMat(:,eventToPlot(e));
     
-    eval(['eventMark = stageData.stageTime(find(~isnan(eventMat)));']);
+    eval(['eventMark = stageData.stageTime(find(eventMat>0));']);
     
     for i=1:length(eventMark)
         eT = eventMark(i);
-        plot([eT, eT], [-.25-(e-1), -.75-(e-1)], 'k', 'LineWidth', .2);
+        plot([eT, eT], [-.25-(e-1), -.75-(e-1)], 'k', 'LineWidth', .05);
     end
 end
 
@@ -137,7 +137,7 @@ xlabel('Hours');
 
 elseif type == 2
     
-    LUT = eventLUT;
+
 eventSums = nansum(stageData.eventMat,1);
 eventToPlot = find(eventSums>0);
 eFields = LUT(eventToPlot,2);
@@ -212,12 +212,12 @@ for e=1:numEvents
     
     etp=fliplr(eventToPlot);
     eventMat = stageData.eventMat(:,eventToPlot(e));    
-    eval(['eventMark = stageData.stageTime(find(~isnan(eventMat)));']);
+    eval(['eventMark = stageData.stageTime(find(eventMat>0));']);
     
     for i=1:length(eventMark)
         eT = eventMark(i);
         if eT>=offT
-        plot([eT, eT], [-.25-(e-1), -.75-(e-1)], 'k', 'LineWidth', .2);
+        plot([eT, eT], [-.25-(e-1), -.75-(e-1)], 'k', 'LineWidth', .05);
         end
     end
 end

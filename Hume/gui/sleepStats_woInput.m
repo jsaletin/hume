@@ -178,7 +178,13 @@ file = get(handles.fileIN, 'String');
 onsetMode = handles.onsetMode;
 remRules = [handles.combRule handles.rempMIN handles.endREM];
 endMode = handles.endMode;
-stageStats=plotSleepStats(handles.stageData,onsetMode,remRules,endMode,[],handles.pathName,handles.fileName);
+
+if sum(ismember({handles.EEG.chanlocs.labels},'SpO2'))>0
+    SpO2 = handles.EEG.data(ismember({handles.EEG.chanlocs.labels},'SpO2'),:);
+    stageStats = plotSleepStats_wOSat(handles.stageData,onsetMode,remRules,endMode,[],handles.pathName,handles.fileName, SpO2, handles.EEG.srate);
+else
+    stageStats=plotSleepStats(handles.stageData,onsetMode,remRules,endMode,[],handles.pathName,handles.fileName);
+end
 
 if handles.includeSpect.Value == 1
     

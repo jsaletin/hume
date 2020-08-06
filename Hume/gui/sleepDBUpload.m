@@ -189,17 +189,20 @@ if  ~isempty(fetch(handles.conn,['SELECT 1 FROM SleepLabStats.scoredinfo WHERE r
         
         update(handles.conn, 'SleepLabStats.CycleSummary', { 'numCycles', 'numNREMP', 'numREMP'}, [ num2cell([handles.stageStats.CycleSummary(1,1),size(handles.stageStats.NREMperiodStats,2),handles.stageStats.CycleSummary(1,2)])], ['where record =''',handles.recordName.String,'''']);
         TempCycles = NaN(10,18);
-        TempCycles(1:10,1:size(handles.stageStats.CycleStats,2)) = [handles.stageStats.CycleStats; handles.stageStats.REMperiodStats(10,:)];
-        update(handles.conn, 'SleepLabStats.CycleWake', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(1,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleS1', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(2,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleS2', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(3,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleS3', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(4,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleS4', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(5,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleREM', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(6,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleMT', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(7,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleSW', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(8,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleTotal', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(9,:))], ['where record =''',handles.recordName.String,'''']);
-        update(handles.conn, 'SleepLabStats.CycleREMSegments', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(10,:))], ['where record =''',handles.recordName.String,'''']);
+        if ~isempty(handles.StageStats.CycleStats)
+            
+            TempCycles(1:10,1:size(handles.stageStats.CycleStats,2)) = [handles.stageStats.CycleStats; handles.stageStats.REMperiodStats(10,:)];
+            update(handles.conn, 'SleepLabStats.CycleWake', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(1,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleS1', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(2,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleS2', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(3,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleS3', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(4,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleS4', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(5,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleREM', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(6,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleMT', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(7,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleSW', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(8,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleTotal', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(9,:))], ['where record =''',handles.recordName.String,'''']);
+            update(handles.conn, 'SleepLabStats.CycleREMSegments', {'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18'}, [(TempCycles(10,:))], ['where record =''',handles.recordName.String,'''']);
+        end
         
         TempHours = NaN(9,18);
         TempHours(1:9,1:size(handles.stageStats.splitHour,2)) = handles.stageStats.splitHour;
@@ -395,14 +398,17 @@ else
     insert(handles.conn, 'SleepLabStats.transitionsFromMT', {'record', 'Wake', 'S1', 'S2', 'S3', 'S4', 'REM', 'MT', 'SW'}, [{handles.recordName.String},num2cell([handles.stageStats.transTableAll(7,:) handles.stageStats.transTableCollapse(6,4)])]);
     insert(handles.conn, 'SleepLabStats.transitionsFromSW', {'record', 'Wake', 'S1', 'S2', 'SW', 'REM', 'MT'}, [{handles.recordName.String},num2cell([handles.stageStats.transTableCollapse(4,:)])]);
 
-    % Events
-    for i = 1:size(handles.stageStats.eventData.events)
-        switch handles.stageStats.eventData.events{i,1}
-            case 'Movement Arousal'
-                insert(handles.conn, 'SleepLabStats.eventsMvtArousals', {'record', 'sptWake', 'sptMT', 'sptNREM', 'sptREM', 'sptTST', 'nsptSleep', 'nsptWake'}, [{handles.recordName.String},num2cell([handles.stageStats.eventData.events{i,2}])]);
-
+    if isfield(handles.StageStats, 'eventData')
+        % Events
+        for i = 1:size(handles.stageStats.eventData.events)
+            switch handles.stageStats.eventData.events{i,1}
+                case 'Movement Arousal'
+                    insert(handles.conn, 'SleepLabStats.eventsMvtArousals', {'record', 'sptWake', 'sptMT', 'sptNREM', 'sptREM', 'sptTST', 'nsptSleep', 'nsptWake'}, [{handles.recordName.String},num2cell([handles.stageStats.eventData.events{i,2}])]);
+                    
+            end
         end
     end
+    
 end
 waitfor(msgbox('Upload complete!'));
 close(handles.gui);
@@ -456,7 +462,8 @@ else
         
     else
         handles.conn = getappdata(0,'Conn');
-        
+        setdbprefs('DataReturnFormat','cellarray');  
+
         % Load SleepStats
         load([handles.pathName,'/',handles.fileIN.String,'/',handles.fileIN.String,'_stats.mat']);
         handles.stageStats = stageStats;
