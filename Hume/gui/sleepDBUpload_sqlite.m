@@ -224,15 +224,16 @@ if  ~isempty(fetch(handles.conn,['SELECT 1 FROM scoredinfo WHERE record = ''',ha
         update(handles.conn, 'transitionsFromMT', { 'Wake', 'S1', 'S2', 'S3', 'S4', 'REM', 'MT', 'SW'}, [([handles.stageStats.transTableAll(7,:) handles.stageStats.transTableCollapse(6,4)])], ['where record =''',handles.recordName.String,'''']);
         update(handles.conn, 'transitionsFromSW', { 'Wake', 'S1', 'S2', 'SW', 'REM', 'MT'}, [([handles.stageStats.transTableCollapse(4,:)])], ['where record =''',handles.recordName.String,'''']);
 
-        % Events
-        for i = 1:size(handles.stageStats.eventData.events)
-            switch handles.stageStats.eventData.events{i,1}
-                case 'Movement Arousal'
-                    update(handles.conn, 'eventsMvtArousals', {'sptWake', 'sptMT', 'sptNREM', 'sptREM', 'sptTST', 'nsptSleep', 'nsptWake'}, [([handles.stageStats.eventData.events{i,2}])], ['where record =''',handles.recordName.String,'''']);
-                    
+        if isfield(handles.stageStats, 'eventData')
+            % Events
+            for i = 1:size(handles.stageStats.eventData.events)
+                switch handles.stageStats.eventData.events{i,1}
+                    case 'Movement Arousal'
+                        update(handles.conn, 'eventsMvtArousals', {'sptWake', 'sptMT', 'sptNREM', 'sptREM', 'sptTST', 'nsptSleep', 'nsptWake'}, [([handles.stageStats.eventData.events{i,2}])], ['where record =''',handles.recordName.String,'''']);
+                        
+                end
             end
         end
-        
     end
     
 else
