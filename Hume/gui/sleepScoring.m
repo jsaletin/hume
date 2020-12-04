@@ -7,7 +7,7 @@ function varargout = sleepScoring(varargin)
 %
 %   Jared M. Saletin, PhD (1, 2) and Stephanie M. Greer, PhD (2) E-Mails:
 %   jared_saletin@brown.edu , smgreer@gmail.com
-%
+
 %       (1) Department of Psychiatry and Human Behavior, Alpert Medical
 %       School of Brown University
 %
