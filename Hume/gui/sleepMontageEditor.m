@@ -86,7 +86,7 @@ o2satChs = CurrMontage.o2satChs;
 
 handles.montage.bigGridMat = bigGridMat;
 handles.montage.hideChans = hideChs;
-handles.montage.negChs = negChs;
+handles.montage.negChans = negChs;
 handles.montage.electrodes = CurrMontage.electrodes;
 handles.montage.colors = CurrMontage.colors;
 handles.montage.scale = CurrMontage.scale;
@@ -1204,7 +1204,7 @@ function saveMontage_Callback(hObject, eventdata, handles)
 % hObject    handle to saveMontage (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-montageFile = sprintf('function handles = sleep_Montage(handles)\n');
+montageFile = sprintf('function CurrMontage = sleep_Montage(handles)\n');
 montageFile = [montageFile,sprintf('%%%%    Auto-generated Húmë Scoring Montage\n')];
 montageFile = [montageFile,sprintf('%%  Montage Generated from File: %s\n',handles.fileName)];
 montageFile = [montageFile,sprintf('%%  Montage Generated on Date: %s\n\n',date)];
@@ -1288,38 +1288,38 @@ colors = [colors,'}'];
 scaleChs =[scaleChs,'}'];
 o2satChs = [o2satChs,'}'];
 
-montageFile = [montageFile,sprintf('handles.hideChans = %s;\n', hideChs)];
+montageFile = [montageFile,sprintf('CurrMontage.hideChans = %s;\n', hideChs)];
 
 montageFile = [montageFile,sprintf('%%electrode names that should be ploted.\n')];
-montageFile = [montageFile,sprintf('handles.electrodes = flipud(%s);\n',channels)];
+montageFile = [montageFile,sprintf('CurrMontage.electrodes = flipud(%s);\n',channels)];
 
 montageFile = [montageFile,sprintf('%%colors for each electrode. The order and length must match the electrode list\n')];
-montageFile = [montageFile,sprintf('handles.colors = flipud(%s);\n', colors)];
+montageFile = [montageFile,sprintf('CurrMontage.colors = flipud(%s);\n', colors)];
 
 montageFile = [montageFile,sprintf('%%scale for each electrode. The order and length must match the electrode list\n')];
-montageFile = [montageFile,sprintf('handles.scale = flipud(%s);\n', scaleChs)];
+montageFile = [montageFile,sprintf('CurrMontage.scale = flipud(%s);\n', scaleChs)];
 
 montageFile = [montageFile,sprintf('%% channels to add scale lines to\n')];
-montageFile = [montageFile,sprintf('handles.scaleChans = %s;\n', ampChs)];
+montageFile = [montageFile,sprintf('CurrMontage.scaleChans = %s;\n', ampChs)];
 
 montageFile = [montageFile,sprintf('%% channels to plot as second-to-second numeric data (e.g., SpO2) data\n')];
-montageFile = [montageFile,sprintf('handles.o2satChs = %s;\n', o2satChs)];
+montageFile = [montageFile,sprintf('CurrMontage.o2satChs = %s;\n', o2satChs)];
 
 montageFile = [montageFile,sprintf('%% channels to plot negative up\n')];
-montageFile = [montageFile,sprintf('handles.negChans = %s;\n', negChs)];
+montageFile = [montageFile,sprintf('CurrMontage.negChans = %s;\n', negChs)];
 
 montageFile = [montageFile,sprintf('%% voltage to place scales\n')];
 
 for i = 1:size(bigGridMat,1)
 
     % print channel index
-    montageFile = [montageFile,sprintf('handles.bigGridMat{%d,1} = ''%s'';\n',i,bigGridMat{i,1})];
+    montageFile = [montageFile,sprintf('CurrMontage.bigGridMat{%d,1} = ''%s'';\n',i,bigGridMat{i,1})];
    
     % print grid amp cells
     config = bigGridMat{i,2};
     for r = 1:size(config,1);
-        montageFile = [montageFile,sprintf('handles.bigGridMat{%d,2}{%d,1} = ''%s'';\n',i,r,bigGridMat{i,2}{r,1})];
-        montageFile = [montageFile,sprintf('handles.bigGridMat{%d,2}{%d,2} = [%d %d %d];\n',i,r,bigGridMat{i,2}{r,2}(1,1),bigGridMat{i,2}{r,2}(1,2),bigGridMat{i,2}{r,2}(1,3))];
+        montageFile = [montageFile,sprintf('CurrMontage.bigGridMat{%d,2}{%d,1} = ''%s'';\n',i,r,bigGridMat{i,2}{r,1})];
+        montageFile = [montageFile,sprintf('CurrMontage.bigGridMat{%d,2}{%d,2} = [%d %d %d];\n',i,r,bigGridMat{i,2}{r,2}(1,1),bigGridMat{i,2}{r,2}(1,2),bigGridMat{i,2}{r,2}(1,3))];
     end
 end
 [fileName,pathName]= uiputfile({'*.m'},'Save Montage File');

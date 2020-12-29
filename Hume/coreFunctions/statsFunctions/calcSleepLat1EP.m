@@ -26,7 +26,12 @@ function [sleepLat latDef] = calcSleepLat(stages)
 sleep = find((stages > 0) & (stages < 6));
 
 foundOnset = 0;
-sleepLat = sleep(1);
+if ~isempty(sleep)
+    sleepLat = sleep(1);
+else
+    sleepLat = NaN;
+end
+
 
 
 latDef = 'The time from the epoch of lights out until the first epoch of sleep.';

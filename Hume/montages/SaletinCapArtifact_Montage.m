@@ -1,4 +1,4 @@
-function handles = sleep_Montage(handles)
+function CurrMontage = sleep_Montage(handles)
 %%    Auto-generated Húmë Scoring Montage
 %  Montage Generated from File: ADMDUN1A.edf
 %  Montage Generated on Date: 15-Jan-2015
@@ -25,42 +25,42 @@ function handles = sleep_Montage(handles)
 %   responsibility for its use in this manner.
 %%
 % channels to hide
-handles.hideChans = {};
+CurrMontage.hideChans = {};
 if ~isempty(handles.EEG.etc.noiseDetection.interpolatedChannelNumbers)
-    handles.hideChans = {handles.EEG.chanlocs(handles.EEG.etc.noiseDetection.interpolatedChannelNumbers).labels};
+    CurrMontage.hideChans = {handles.EEG.chanlocs(handles.EEG.etc.noiseDetection.interpolatedChannelNumbers).labels};
 end
 %electrode names that should be ploted.
-handles.electrodes = flipud({'C3','O2','C4','O1','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','FCz'}');
+CurrMontage.electrodes = flipud({'C3','O2','C4','O1','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','FCz'}');
 % channels to plot negative up
-handles.negChans = {'C3','O2','C4','O1','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','FCz'}';
+CurrMontage.negChans = {'C3','O2','C4','O1','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','FCz'}';
 % channels to plot as second-to-second numeric data (e.g., SpO2) data
-handles.o2satChs = {};
+CurrMontage.o2satChs = {};
 %colors for each electrode. The order and length must match the electrode list
-handles.colors = flipud(repmat({[1 0 0]}, 32, 1));
+CurrMontage.colors = flipud(repmat({[1 0 0]}, 32, 1));
 %scale for each electrode. The order and length must match the electrode list
-handles.scale = flipud(repmat({'150'}, 32 ,1));
+CurrMontage.scale = flipud(repmat({'150'}, 32 ,1));
 % channels to add scale lines to
-handles.scaleChans = {};
+CurrMontage.scaleChans = {};
 % voltage to place scales
-handles.bigGridMat{1,1} = 'C3';
-handles.bigGridMat{1,2}{1,1} = '-75';
-handles.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{2,1} = '-37.5';
-handles.bigGridMat{1,2}{2,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{3,1} = '0';
-handles.bigGridMat{1,2}{3,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{4,1} = '37.5';
-handles.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{5,1} = '75';
-handles.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,1} = 'C4';
-handles.bigGridMat{2,2}{1,1} = '-75';
-handles.bigGridMat{2,2}{1,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{2,1} = '-37.5';
-handles.bigGridMat{2,2}{2,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{3,1} = '0';
-handles.bigGridMat{2,2}{3,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{4,1} = '37.5';
-handles.bigGridMat{2,2}{4,2} = [0 5.000000e-01 0];
-handles.bigGridMat{2,2}{5,1} = '75';
-handles.bigGridMat{2,2}{5,2} = [0 5.000000e-01 0];
+CurrMontageCurrMontage.bigGridMat{1,1} = 'C3';
+CurrMontage.bigGridMat{1,2}{1,1} = '-75';
+CurrMontage.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{2,1} = '-37.5';
+CurrMontage.bigGridMat{1,2}{2,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{3,1} = '0';
+CurrMontage.bigGridMat{1,2}{3,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{4,1} = '37.5';
+CurrMontage.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{5,1} = '75';
+CurrMontage.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,1} = 'C4';
+CurrMontage.bigGridMat{2,2}{1,1} = '-75';
+CurrMontage.bigGridMat{2,2}{1,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{2,1} = '-37.5';
+CurrMontage.bigGridMat{2,2}{2,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{3,1} = '0';
+CurrMontage.bigGridMat{2,2}{3,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{4,1} = '37.5';
+CurrMontage.bigGridMat{2,2}{4,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{5,1} = '75';
+CurrMontage.bigGridMat{2,2}{5,2} = [0 5.000000e-01 0];

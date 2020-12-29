@@ -1,4 +1,4 @@
-function handles = sleep_Montage(handles)
+function CurrMontage = sleep_Montage(handles)
 %%    Auto-generated Húmë Scoring Montage
 %  Montage Generated from File: 217001_Spindles.edf
 %  Montage Generated on Date: 01-Jul-2019
@@ -25,28 +25,28 @@ function handles = sleep_Montage(handles)
 %   responsibility for its use in this manner.
 %%
 % channels to hide
-handles.hideChans = {};
+CurrMontage.hideChans = {};
 %electrode names that should be ploted.
-handles.electrodes = flipud({'FZ';'CZ';'PZ';});
+CurrMontage.electrodes = flipud({'FZ';'CZ';'PZ';});
 % channels to plot negative up
-handles.negChans = {'FZ';'CZ';'PZ';};
+CurrMontage.negChans = {'FZ';'CZ';'PZ';};
 % channels to plot as second-to-second numeric data (e.g., SpO2) data
-handles.o2satChs = {};
+CurrMontage.o2satChs = {};
 %colors for each electrode. The order and length must match the electrode list
-handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];});
+CurrMontage.colors = flipud({[1  0  0];[1  0  0];[1  0  0];});
 %scale for each electrode. The order and length must match the electrode list
-handles.scale = flipud({'150';'150';'150';});
+CurrMontage.scale = flipud({'150';'150';'150';});
 % channels to add scale lines to
-handles.scaleChans = {};
+CurrMontage.scaleChans = {};
 % voltage to place scales
-handles.bigGridMat{1,1} = 'PZ';
-handles.bigGridMat{1,2}{1,1} = '-75';
-handles.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{2,1} = '-37.5';
-handles.bigGridMat{1,2}{2,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{3,1} = '0';
-handles.bigGridMat{1,2}{3,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{4,1} = '37.5';
-handles.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{5,1} = '75';
-handles.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,1} = 'PZ';
+CurrMontage.bigGridMat{1,2}{1,1} = '-75';
+CurrMontage.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{2,1} = '-37.5';
+CurrMontage.bigGridMat{1,2}{2,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{3,1} = '0';
+CurrMontage.bigGridMat{1,2}{3,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{4,1} = '37.5';
+CurrMontage.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{5,1} = '75';
+CurrMontage.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];

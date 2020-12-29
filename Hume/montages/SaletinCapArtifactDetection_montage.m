@@ -1,4 +1,4 @@
-function handles = sleep_Montage(handles)
+function CurrMontage = sleep_Montage(handles)
 %%    Auto-generated Húmë Scoring Montage
 %  Montage Generated from File: ADMDUN1A.edf
 %  Montage Generated on Date: 15-Jan-2015
@@ -25,11 +25,11 @@ function handles = sleep_Montage(handles)
 %   responsibility for its use in this manner.
 %%
 % channels to hide
-handles.hideChans = {};
+CurrMontage.hideChans = {};
 %electrode names that should be ploted.
-handles.electrodes = flipud({'C3','O2','ROC','LOC','C4','O1','EMG 1-EMG 2','EMG 2-EMG 3','EMG 1-EMG 3','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','A1','A2','FCz'}');
+CurrMontage.electrodes = flipud({'C3','O2','ROC','LOC','C4','O1','EMG 1-EMG 2','EMG 2-EMG 3','EMG 1-EMG 3','FP1','Fpz','FP2','AFz','F7','F3','FZ','F4','F8','T3','CZ','T4','CPz','T5','P3','PZ','P4','T6','POz','OZ','A1','A2','FCz'}');
 %colors for each electrode. The order and length must match the electrode list
-handles.colors = flipud(repmat({[1 0 0]}, 32, 1));
+CurrMontage.colors = flipud(repmat({[1 0 0]}, 32, 1));
 %scale for each electrode. The order and length must match the electrode list
-handles.scale = flipud(repmat({'150'}, 32 ,1));
+CurrMontage.scale = flipud(repmat({'150'}, 32 ,1));
 

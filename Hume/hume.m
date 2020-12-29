@@ -71,8 +71,8 @@ addpath(genpath([fpath,'/gui']));
 
 % Check for EEGLAB
 if exist('eeglab.m','file')~=2
-    fprintf(1,'\n!!! No EEGLAB detected, using included verison (13.4.4b) !!!\n');
-    addpath(([fpath,'/outsideToolboxes/eeglab13_4_4b']));
+    fprintf(1,'\n!!! No EEGLAB detected, using included verison (2020_0) !!!\n');
+    addpath(([fpath,'/outsideToolboxes/eeglab2020_0']));
     fprintf(1,'Loading: EEGLAB\n');  
     eeglab;
 else

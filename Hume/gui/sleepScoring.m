@@ -376,8 +376,8 @@ function startB_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 set(handles.setupPan, 'Visible', 'off')
 set(handles.sleepSetPan, 'Visible', 'off')
-handles.hideChans = {};
-handles.scaleChans = {'C3-A2' 'C4-A1'};
+handles.hideChans = handles.CurrMontage.hideChans;
+handles.scaleChans = handles.CurrMontage.scaleChans;
 handles.curScale = 150;
 handles.showComp = 0;
 guidata(hObject, handles)
@@ -385,10 +385,32 @@ guidata(hObject, handles)
 [stagePath, stageName, stageEXT]=fileparts(get(handles.stageFileIN,'String'));
 [eegPath, eegName, eegEXT]=fileparts(get(handles.fileIN,'String'));
 set(handles.humeWindow,'Name',sprintf('Húmë Scoring: [PSG File: %s, Score File: %s]',[eegName,eegEXT], [stageName,stageEXT]));
+
 handles = initStaging(handles);
-guidata(hObject, handles);
-runPlot(handles)
-updateStage(handles, []);
+
+exit =  0;
+while exit == 0
+    
+    mont = listdlg('ListString', handles.plotSleepIN.String, 'Name', 'Pick a Montage', 'SelectionMode', 'single');
+    if isempty(mont)
+        return
+    end
+    
+    try
+        set(handles.plotSleepIN, 'Value', mont);
+        plotFCN = get(handles.plotSleepIN, 'String');
+        boxInd = get(handles.plotSleepIN, 'Value');
+        eval(['handles.CurrMontage = ',plotFCN{boxInd}, '(handles);']);
+        guidata(hObject, handles);
+        runPlot(handles)
+        updateStage(handles, []);
+        exit = 1;
+    catch
+        waitfor(msgbox('Montage is incompatible. Try again'));
+    end
+end
+
+
 
 
 
@@ -1098,16 +1120,21 @@ function plotSleepIN_Callback(hObject, eventdata, handles)
 % Hints: contents = get(hObject,'String') returns plotSleepIN contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from plotSleepIN
 curX = xlim(handles.axes1);
-range = curX(1):curX(2);
-
+%range = curX(1):curX(2);
+range=[curX(1):1:((curX+handles.stageData.win*handles.EEG.srate)-1)];
 
 plotFCN = get(handles.plotSleepIN, 'String');
 boxInd = get(handles.plotSleepIN, 'Value');
+    
+eval(['mont = ',plotFCN{boxInd}, '(handles);']);
 
-eval(['handles.CurrMontage = ',plotFCN{boxInd}, '(handles);']);
-
-handles = plotSleepData(handles, range);
-guidata(hObject, handles);
+if length(intersect({handles.EEG.chanlocs.labels}, mont.electrodes)) == length(mont.electrodes)
+    handles.CurrMontage = mont;
+    handles = plotSleepData(handles, range);
+    guidata(hObject, handles);
+else
+    waitfor(msgbox('Montage is incompatible. Try again'));
+end
 
 
 % --- Executes during object creation, after setting all properties.

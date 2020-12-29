@@ -1,4 +1,4 @@
-function handles = sleep_Montage(handles)
+function CurrMontage = sleep_Montage(handles)
 %%    Auto-generated Húmë Scoring Montage
 %  Montage Generated from File: 510_BSL.edf
 %  Montage Generated on Date: 09-Jun-2020
@@ -25,28 +25,28 @@ function handles = sleep_Montage(handles)
 %   responsibility for its use in this manner.
 %%
 % channels to hide
-handles.hideChans = {};
+CurrMontage.hideChans = {};
 % channels to plot negative up
-handles.negChans = {'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'EMG1-EMG3';'EKG-R-EKG-L';'SpO2';'Thermistor';'Thoracic Resp';'Abdominal Resp';'Pleth'};
+CurrMontage.negChans = {'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'EMG1-EMG3';'EKG-R-EKG-L';'SpO2';'Thermistor';'Thoracic Resp';'Abdominal Resp';'Pleth'};
 %electrode names that should be ploted.
-handles.electrodes = flipud({'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'EMG1-EMG3';'EKG-R-EKG-L';'SpO2';'Thermistor';'Thoracic Resp';'Abdominal Resp';'Pleth';});
+CurrMontage.electrodes = flipud({'C3-A2';'O2-A1';'ROC-A1';'LOC-A2';'EMG1-EMG3';'EKG-R-EKG-L';'SpO2';'Thermistor';'Thoracic Resp';'Abdominal Resp';'Pleth';});
 %colors for each electrode. The order and length must match the electrode list
-handles.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];});
+CurrMontage.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];});
 %scale for each electrode. The order and length must match the electrode list
-handles.scale = flipud({'150';'150';'150';'150';'150';'1500';'10';'10';'10';'10';'.25';});
+CurrMontage.scale = flipud({'150';'150';'150';'150';'150';'1500';'10';'10';'10';'10';'.25';});
 % channels to add scale lines to
-handles.scaleChans = {'C3-A2'};
+CurrMontage.scaleChans = {'C3-A2'};
 % channels to plot as second-to-second numeric data (e.g., SpO2) data
-handles.o2satChs = {'SpO2'};
+CurrMontage.o2satChs = {'SpO2'};
 % voltage to place scales
-handles.bigGridMat{1,1} = 'C3-A2';
-handles.bigGridMat{1,2}{1,1} = '-75';
-handles.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{2,1} = '-37.5';
-handles.bigGridMat{1,2}{2,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{3,1} = '0';
-handles.bigGridMat{1,2}{3,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{4,1} = '37.5';
-handles.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
-handles.bigGridMat{1,2}{5,1} = '75';
-handles.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,1} = 'C3-A2';
+CurrMontage.bigGridMat{1,2}{1,1} = '-75';
+CurrMontage.bigGridMat{1,2}{1,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{2,1} = '-37.5';
+CurrMontage.bigGridMat{1,2}{2,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{3,1} = '0';
+CurrMontage.bigGridMat{1,2}{3,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{4,1} = '37.5';
+CurrMontage.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{1,2}{5,1} = '75';
+CurrMontage.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];

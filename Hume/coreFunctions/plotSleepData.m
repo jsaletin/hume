@@ -237,7 +237,7 @@ tickMarks = (((newX(1) - 1)/srate):1:((newX(2) - 1)/srate));
 numTicks = length(tickMarks);
 distanceTicks = handles.stageData.win/numTicks;
 curWin = xlim;
-ind=floor(newX(2)/(handles.stageData.win*srate));
+%ind=floor(newX(2)/(handles.stageData.win*srate));
 rstart = handles.stageData.recStart + (floor(newX(1)/srate)/86400);
 
 tickStrs = {datestr(rstart,'HH:MM:SS')};

@@ -27,20 +27,29 @@ function [sleepLat latDef] = calcSleepLat(stages,win)
 sleep = find((stages > 0) & (stages < 6));
 
 foundOnset = 0;
-sleepLat = sleep(1);
-count = 1;
-epCount = 1;
-while(~foundOnset && count < length(sleep))
-    count = count + 1;
-    if((sleep(count) - sleep(count - 1)) == 1)
-        epCount = epCount + 1;
-    else
-        sleepLat = sleep(count);
-        epCount = 1;
+
+if ~isempty(sleep)
+    
+    sleepLat = sleep(1);
+    count = 1;
+    epCount = 1;
+    while(~foundOnset && count < length(sleep))
+        count = count + 1;
+        if((sleep(count) - sleep(count - 1)) == 1)
+            epCount = epCount + 1;
+        else
+            sleepLat = sleep(count);
+            epCount = 1;
+        end
+        if(epCount == (10*(60/win)))
+            foundOnset = 1;
+        end
     end
-    if(epCount == (10*(60/win)))
-        foundOnset = 1;
+    if foundOnset == 0
+        sleepLat = nan;
     end
+else
+    sleepLat = nan;
 end
 
 latDef = 'The time from the epoch of lights out until the first epoch of 10 contiguous minutes of sleep.';
