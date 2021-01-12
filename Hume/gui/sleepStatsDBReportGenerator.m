@@ -3028,7 +3028,7 @@ switch handles.split.colAlls(c);
     
     case 0 
         handles.split.colAlls(c) = 1;
-        
+        handles.
     case 1 
         handles.split.colAlls(c) = 0;
         

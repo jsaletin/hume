@@ -134,11 +134,11 @@ for e = 1:length(electrodes)
                 
                 % Here the scale lines are plotted if the current electrode
                 % is in the scaleCh list.
-                plot(h, range, zeros(size(centerData)) +  e*(plotSpace) + 75, '--', 'color', [0 .5 0]);
+                plot(h, range, zeros(size(floorData)) +  e*(plotSpace) + 75, '--', 'color', [0 .5 0]);
                 text(h, range(1), e*(plotSpace) + 75,'100', 'FontSize', 9);
-                plot(h, range, zeros(size(centerData)) +  e*(plotSpace), '--', 'color', [1 .5 0]);
+                plot(h, range, zeros(size(floorData)) +  e*(plotSpace), '--', 'color', [1 .5 0]);
                 text(h, range(1), e*(plotSpace),'90', 'FontSize', 9);
-                plot(h, range, zeros(size(centerData)) +  e*(plotSpace) - 75, '--', 'color', [1 0 0]);
+                plot(h, range, zeros(size(floorData)) +  e*(plotSpace) - 75, '--', 'color', [1 0 0]);
                 text(h, range(1), e*(plotSpace) - 75,'80', 'FontSize', 9);
 
 

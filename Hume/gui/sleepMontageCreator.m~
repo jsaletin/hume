@@ -1184,8 +1184,7 @@ colors = '{';
 ampChs = '{';
 scaleChs = '{';
 hideChs = '{';
-negChs = '{';
-o2satChs = '{';
+negChs
 g=0;
 for e = 1:14
     

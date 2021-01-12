@@ -1,7 +1,7 @@
 function CurrMontage = sleep_Montage(handles)
 %%    Auto-generated Húmë Scoring Montage
-%  Montage Generated from File: Test 4 EDF.edf
-%  Montage Generated on Date: 01-Dec-2020
+%  Montage Generated from File: 0
+%  Montage Generated on Date: 12-Jan-2021
 
 %%    Copyright (c) 2015 Jared M. Saletin, PhD and Stephanie M. Greer, PhD
 %
@@ -26,18 +26,18 @@ function CurrMontage = sleep_Montage(handles)
 %%
 % channels to hide
 CurrMontage.hideChans = {};
-% channels to plot negative up
-CurrMontage.negChans = {'C3-M2';'F3-M2';'F4-M1';};
-%electrode names that should be plotted.
-CurrMontage.electrodes = flipud({'C3-M2';'F3-M2';'F4-M1';});
+%electrode names that should be ploted.
+CurrMontage.electrodes = flipud({'C3-M2';'O2-M1';'E2-M2';'E1-M2';'EMG_L';'EMG_R';'C4-M1';'O1-M2';'ECG';'Pres';'Flow';'Thor';'Abdo';'SpO2';});
 %colors for each electrode. The order and length must match the electrode list
-CurrMontage.colors = flipud({[1  0  0];[1  0  0];[1  0  0]});
+CurrMontage.colors = flipud({[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1  0  0];[1 0 0];});
 %scale for each electrode. The order and length must match the electrode list
-CurrMontage.scale = flipud({'.15';'.15';'.15';});
+CurrMontage.scale = flipud({'.15';'.15';'.15';'.15';'.15';'.15';'.15';'.15';'10';'35';'35';'35';'35';'.15';});
 % channels to add scale lines to
-CurrMontage.scaleChans = {'C3-M2' };
+CurrMontage.scaleChans = {'C3-M2' 'C4-M1'};
 % channels to plot as second-to-second numeric data (e.g., SpO2) data
-CurrMontage.o2satChs = {};
+CurrMontage.o2satChs = {'SpO2'};
+% channels to plot negative up
+CurrMontage.negChans = {'C3-M2' 'O2-M1' 'E2-M2' 'E1-M2' 'EMG_L' 'EMG_R' 'C4-M1' 'O1-M2'};
 % voltage to place scales
 CurrMontage.bigGridMat{1,1} = 'C3-M2';
 CurrMontage.bigGridMat{1,2}{1,1} = '-.075';
@@ -50,3 +50,14 @@ CurrMontage.bigGridMat{1,2}{4,1} = '.0375';
 CurrMontage.bigGridMat{1,2}{4,2} = [0 5.000000e-01 0];
 CurrMontage.bigGridMat{1,2}{5,1} = '.075';
 CurrMontage.bigGridMat{1,2}{5,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,1} = 'C4-M1';
+CurrMontage.bigGridMat{2,2}{1,1} = '-.075';
+CurrMontage.bigGridMat{2,2}{1,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{2,1} = '-.0375';
+CurrMontage.bigGridMat{2,2}{2,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{3,1} = '0';
+CurrMontage.bigGridMat{2,2}{3,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{4,1} = '.0375';
+CurrMontage.bigGridMat{2,2}{4,2} = [0 5.000000e-01 0];
+CurrMontage.bigGridMat{2,2}{5,1} = '.075';
+CurrMontage.bigGridMat{2,2}{5,2} = [0 5.000000e-01 0];

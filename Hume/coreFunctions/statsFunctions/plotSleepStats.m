@@ -697,6 +697,9 @@ if ~isnan(sleepLat)
     end
     report = [report, '</tr></table>'];
     report = [report, '</td></table>'];
+    if isempty(dataOut)
+        dataOut = nan(10,1);
+    end
     stageStats.NREMperiodStats = dataOut;
     
     %%%%%%%%%%%%%%%% REM Period
@@ -709,6 +712,9 @@ if ~isnan(sleepLat)
         dataOut(lastRow, c) = size(REMsegs{c}, 1);
     end
     report = [report, '</tr></table>'];
+    if isempty(dataOut)
+        dataOut = nan(10,1);
+    end
     stageStats.REMperiodStats = dataOut;
     
     
