@@ -1,4 +1,4 @@
-function stageStats = plotSleepStats(file, onsetMode, remRules, endSleepMode, importFunction, outdir, outfile)
+function stageStats = plotSleepStats(file, onsetMode, remRules, endSleepMode, importFunction, skipREM, outdir, outfile)
 % stageStats = plotSleepStats(stageData, outname)
 %
 %   Command-line backend for sleep statistics calculation. Called from Húmë
@@ -105,11 +105,11 @@ if ischar(file)
         cond = '';
         id = '';
         scorer = '';
-        if(nargin<6)
+        if(nargin<7)
             outfile = fileName;
             outname = [path,outfile,'/',outfile];
             mkdir([path,fileName]);
-        elseif(nargin<7)
+        elseif(nargin<8)
             outname = [path,outfile,'/',stageStats];
             fileName='stageStats';
             outfile = 'stageStats';
@@ -633,15 +633,15 @@ if ~isnan(sleepLat)
     
     %%%%%%%%%%%%%  get Quarters
     report = [report, '<tr><td>'];
-    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, 4, win);
+    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, 4, win, 0);
     stageStats.quarterBounds = breaks + sleepLat - 1;
     %%%%%%%%%%%%%  get Thirds
     report = [report, '</td><td>'];
-    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, 3, win);
+    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, 3, win, 0);
     stageStats.thirdBounds = breaks + sleepLat - 1;
     %%%%%%%%%%%%%  get Halves
     report = [report, '</td><td>'];
-    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, 2, win);
+    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, 2, win, 0);
     stageStats.halfBounds = breaks + sleepLat - 1;
     report = [report, '</td></tr></table>'];
     
@@ -651,7 +651,7 @@ if ~isnan(sleepLat)
     %%%%%%%%%%%%%  get Hourly Break
     splitFactor = SPTepoch / (60 * (60/win));
     report = [report, '</td><td>'];
-    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, splitFactor, win);
+    [report, stageStats, breaks] = sleepSplit(report, stageStats, stages(sleepLat:sleepEnd), stageMap, splitFactor, win, 1);
     stageStats.hourBounds = breaks + sleepLat - 1;
     report = [report, '</td></tr></table><br>'];
     
@@ -662,12 +662,18 @@ if ~isnan(sleepLat)
     nonSWmin = 12;
     [cycleBounds, NREMsegs, REMsegs] = getNREMcyc_splitJenni(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage, nonSWmin);
     cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
-    stageStats.cycleBoundsJenniSplit = cycleBounds;
     
-    %% Normal Split
-    [cycleBounds, NREMsegs, REMsegs] = getNREMcyc(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage);
-    cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
-    stageStats.cycleBounds = cycleBounds;
+    if skipREM == 0
+            % Don't use Jenni rule for overall stats, save it separately
+            stageStats.cycleBoundsJenniSplit = cycleBounds;
+    
+            %% Normal Split
+            [cycleBounds, NREMsegs, REMsegs] = getNREMcyc(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage);
+            cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
+            stageStats.cycleBounds = cycleBounds;
+    else
+        stageStats.cycleBounds = cycleBounds;
+    end
     
     for i = 1:length(NREMsegs)
         stageStats.NREMsegs{i} = NREMsegs{i} + sleepLat - 1;
@@ -1291,6 +1297,10 @@ report = [report, '<b>Wake After Sleep Onset:</b> Wake time after sleep onset du
 
 report = [report, remDefinitions];
 
+if skipREM == 1
+    report = [report, 'First REM cycle split according to criteria of Jenni & Carskadon, Sleep, 24:4, 2004. <br><br>' ];
+end
+
 report = [report, '<b>All other sleep statistics per: <br><br>',...
     'Carskadon, MA, Rechtschaffen, A. Monitoring and Staging Human Sleep. In: Principles and Practices of Sleep Medicine 4th Edition, pgs. 1359-1377. Ed: Kryger, MH, Roth, T, Dement, WC.  Philadelphia, PA : Elsevier Saunders, 2005.<br><br>',...
     '</p>'];
@@ -1338,7 +1348,7 @@ end
 
 %% helper functions
 
-function [report, stageStats, breaks] = sleepSplit(report, stageStats, stages, stageMap, splitter, win)
+function [report, stageStats, breaks] = sleepSplit(report, stageStats, stages, stageMap, splitter, win, hourYN)
 
 q = round(length(stages)/splitter);
 
@@ -1361,10 +1371,10 @@ end
 [report, stageStats, dataOut] = makeSectionStats(report, stageStats, stages, stageMap, breaks, win);
 report = [report, '</table>'];
 
-if ceil(splitter)==floor(splitter)
+if hourYN == 0
     eval(['stageStats.split', num2str(splitter), '=dataOut;'])
-else
-    stageStats.splitHour=dataOut;
+elseif hourYN == 1
+    stageStats.splitHour = dataOut;
 end
 
 end

@@ -25,7 +25,7 @@ function varargout = sleepStats(varargin)
 
 % Edit the above text to modify the response to help sleepStats
 
-% Last Modified by GUIDE v2.5 09-Jan-2015 14:03:58
+% Last Modified by GUIDE v2.5 06-Jul-2021 14:59:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -187,7 +187,7 @@ if  handles.extValue ~= get(handles.fileType,'Value')-1
     
     errordlg('File Mismatch: File extension and specified type do not match, please check settings','Wrong File Type');
 else
-plotSleepStats(file,onsetMode,remRules,endMode,handles.importList{get(handles.fileType,'Value')-1});
+plotSleepStats(file,onsetMode,remRules,endMode,handles.importList{get(handles.fileType,'Value')-1},handles.skipREM.Value);
 end
 
 
@@ -300,3 +300,12 @@ function fileType_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in skipREM.
+function skipREM_Callback(hObject, eventdata, handles)
+% hObject    handle to skipREM (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of skipREM

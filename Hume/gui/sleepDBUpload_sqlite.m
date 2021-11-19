@@ -101,7 +101,7 @@ if  ~isempty(fetch(handles.conn,['SELECT 1 FROM scoredinfo WHERE record = ''',ha
         
         % Confirm ID and Study Match
         studyOnRecord=fetch(handles.conn,['SELECT study FROM idStudy WHERE id = ''',handles.id.String,''';']);
-        if ~strcmpi(handles.studyName.String{handles.studyName.Value},studyOnRecord{1})
+        if ~strcmpi(handles.studyName.String{handles.studyName.Value},studyOnRecord{1,1})
             
             msgbox(['The entered study: ''',handles.studyName.String{handles.studyName.Value},''' does not match study on record for ''', handles.id.String, ''': ''', studyOnRecord{1},'.'' Confirm!']);
             return;

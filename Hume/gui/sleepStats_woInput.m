@@ -25,7 +25,7 @@ function varargout = sleepStats_woInput(varargin)
 
 % Edit the above text to modify the response to help sleepStats_woInput
 
-% Last Modified by GUIDE v2.5 06-Feb-2019 16:53:48
+% Last Modified by GUIDE v2.5 06-Jul-2021 15:00:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -181,9 +181,9 @@ endMode = handles.endMode;
 
 if sum(ismember({handles.EEG.chanlocs.labels},'SpO2'))>0
     SpO2 = handles.EEG.data(ismember({handles.EEG.chanlocs.labels},'SpO2'),:);
-    stageStats = plotSleepStats_wOSat(handles.stageData,onsetMode,remRules,endMode,[],handles.pathName,handles.fileName, SpO2, handles.EEG.srate);
+    stageStats = plotSleepStats_wOSat(handles.stageData,onsetMode,remRules,endMode,[],handles.skipREM.Value,handles.pathName,handles.fileName, SpO2, handles.EEG.srate);
 else
-    stageStats=plotSleepStats(handles.stageData,onsetMode,remRules,endMode,[],handles.pathName,handles.fileName);
+    stageStats=plotSleepStats(handles.stageData,onsetMode,remRules,endMode,[],handles.skipREM.Value,handles.pathName,handles.fileName);
 end
 
 if handles.includeSpect.Value == 1
@@ -311,3 +311,12 @@ function pickChSpect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in skipREM.
+function skipREM_Callback(hObject, eventdata, handles)
+% hObject    handle to skipREM (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of skipREM

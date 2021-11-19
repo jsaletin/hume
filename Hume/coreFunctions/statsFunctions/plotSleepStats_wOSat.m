@@ -1,4 +1,4 @@
-function stageStats = plotSleepStats_wO2Sat(file, onsetMode, remRules, endSleepMode, importFunction, outdir, outfile, SpO2, O2rate)
+function stageStats = plotSleepStats_wO2Sat(file, onsetMode, remRules, endSleepMode, importFunction, skipREM, outdir, outfile, SpO2, O2rate)
 % stageStats = plotSleepStats(stageData, outname)
 %
 %   Command-line backend for sleep statistics calculation. Called from Húmë
@@ -109,11 +109,11 @@ if ischar(file)
         cond = '';
         id = '';
         scorer = '';
-        if(nargin<6)
+        if(nargin<7)
             outfile = fileName;
             outname = [path,outfile,'/',outfile];
             mkdir([path,fileName]);
-        elseif(nargin<7)
+        elseif(nargin<8)
             outname = [path,outfile,'/',stageStats];
             fileName='stageStats';
             outfile = 'stageStats';
@@ -698,14 +698,27 @@ nonSWmin = 12;
 cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
 stageStats.cycleBoundsJenniSplit = cycleBounds;
 
-%% Normal Split 
-[cycleBounds, NREMsegs, REMsegs] = getNREMcyc(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage);
+%% Calculate split of first Cycle according to Jenni 2004 (split first period if no SWA for 12 minutes)
+nonSWmin = 12;
+[cycleBounds, NREMsegs, REMsegs] = getNREMcyc_splitJenni(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage, nonSWmin);
 cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
-stageStats.cycleBounds = cycleBounds;
+
+if skipREM == 0
+    % Don't use Jenni rule for overall stats, save it separately
+    stageStats.cycleBoundsJenniSplit = cycleBounds;
+    
+    %% Normal Split
+    [cycleBounds, NREMsegs, REMsegs] = getNREMcyc(stages(sleepLat:sleepEnd), win, combining, REMmin, stStage);
+    cycleBounds(cycleBounds > 0) = cycleBounds(cycleBounds > 0) + sleepLat - 1;
+    stageStats.cycleBounds = cycleBounds;
+else
+    stageStats.cycleBounds = cycleBounds;
+end
 
 for i = 1:length(NREMsegs)
     stageStats.NREMsegs{i} = NREMsegs{i} + sleepLat - 1;
 end
+
 for i = 1:length(REMsegs)
     stageStats.REMsegs{i} = REMsegs{i} + sleepLat - 1;
 end
@@ -875,6 +888,10 @@ report = [report, '<b>Wake After Sleep Onset:</b> Wake time after sleep onset du
 '<b>All Interval Analyeses:</b> Calculated from SPT. <br><br>' ];
 
 report = [report, remDefinitions];
+
+if skipREM == 1
+    report = [report, 'First REM cycle split according to criteria of Jenni & Carskadon, Sleep, 24:4, 2004. <br><br>' ];
+end
 
 report = [report, '<b>All other sleep statistics per: <br><br>',...
 'Carskadon, MA, Rechtschaffen, A. Monitoring and Staging Human Sleep. In: Principles and Practices of Sleep Medicine 4th Edition, pgs. 1359-1377. Ed: Kryger, MH, Roth, T, Dement, WC.  Philadelphia, PA : Elsevier Saunders, 2005.<br><br>',...
